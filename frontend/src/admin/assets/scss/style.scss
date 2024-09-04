@@ -1,0 +1,15 @@
+@import "variables";
+
+@import "~bootstrap/scss/bootstrap";
+@import "~bootstrap-icons/font/bootstrap-icons.scss";
+@import "./layout/sidebar";
+@import "./layout/container";
+
+.scrollable {
+  height: 420px;
+  overflow: scroll;
+}
+
+.scrollable::-webkit-scrollbar {
+  display: none;
+}
