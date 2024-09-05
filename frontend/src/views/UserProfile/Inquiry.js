@@ -3,11 +3,13 @@ import { Table } from 'reactstrap';
 import config from "../../admin/components/Config";
 import TextTruncateWithModal from '../../components/TextTruncateWithModal';
 import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
 
 const headings = ["", "Inquiry for", "Description", "Purpose", "Status", "Action"];
 
 const Inquiry = () => {
 
+    const navigate = useNavigate();
     const [inquiries, setInquiries] = useState([]);
 
     const getInquiries = useCallback(async () => {
@@ -54,8 +56,12 @@ const Inquiry = () => {
     }
 
     useEffect(() => {
-        getInquiries();
-    }, [getInquiries])
+        if (!Cookies.get("jwt")) {
+            navigate("/login");
+        } else {
+            getInquiries();
+        }
+    }, [getInquiries, navigate])
 
     return (
         <>

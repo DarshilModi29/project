@@ -2,8 +2,11 @@ import React, { useCallback, useEffect, useState } from 'react'
 import config from '../../admin/components/Config';
 import Cookies from 'js-cookie';
 import { saveAs } from 'file-saver';
+import { useNavigate } from 'react-router-dom';
 
 const Downloads = () => {
+
+    const navigate = useNavigate();
     const [images, setImages] = useState([]);
     const fetchUserImages = useCallback(async () => {
         try {
@@ -50,8 +53,12 @@ const Downloads = () => {
     }
 
     useEffect(() => {
-        fetchUserImages();
-    }, [fetchUserImages])
+        if (!Cookies.get("jwt")) {
+            navigate("/login");
+        } else {
+            fetchUserImages();
+        }
+    }, [fetchUserImages, navigate])
 
     return (
         <>

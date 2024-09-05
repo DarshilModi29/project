@@ -5,6 +5,13 @@ import 'react-quill/dist/quill.snow.css';
 import { inquirySchema } from '../schema';
 import config from '../admin/components/Config';
 import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
+
+const stripHtml = (html) => {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || '';
+};
 
 const initVal = {
   inquireFor: "",
@@ -13,25 +20,38 @@ const initVal = {
 }
 const Inquiry = () => {
 
+  const navigate = useNavigate();
+
   const formik = useFormik({
     initialValues: initVal,
     validationSchema: inquirySchema,
     onSubmit: async (values, action) => {
-      const response = await fetch(`${config.SERVER_URL}/api/inquire`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          "Authorization": `bearer ${Cookies.get("jwt")}`
-        },
-        body: JSON.stringify(values)
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        alert(data.message);
-        action.resetForm();
+      if (!stripHtml(values.description)) {
+        formik.setFieldError("description", "Please describe your Image or Tag");
+      } else if (stripHtml(values.description).trim().length === 0) {
+        formik.setFieldError("description", "White space is not allowed");
       } else {
-        alert(data.message)
+        const response = await fetch(`${config.SERVER_URL}/api/inquire`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            "Authorization": `bearer ${Cookies.get("jwt")}`
+          },
+          body: JSON.stringify(values)
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          alert(data.message);
+          action.resetForm();
+        } else {
+          if (response.status === 401) {
+            alert(data.message);
+            navigate("/login");
+          } else {
+            alert(data.message)
+          }
+        }
       }
     }
   })
@@ -60,28 +80,31 @@ const Inquiry = () => {
                   }
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="desc" className="form-label">
-                    Description
-                  </label>
+                  <label htmlFor="description" className="form-label">Description</label>
                   <ReactQuill
                     modules={{
                       toolbar: [
                         [{ header: [1, 2, false] }],
                         ['bold', 'italic', 'underline'],
-                        ['link']
-                      ]
+                        ['link'],
+                      ],
                     }}
-                    onChange={(e) => formik.setFieldValue('description', e)}
+                    onChange={(value) => {
+                      formik.setFieldValue('description', value);
+                    }}
                     onBlur={() => formik.setFieldTouched('description', true)}
-                    value={formik.values.description} name="description" id='description' theme="snow" />
+                    value={formik.values.description}
+                    name="description"
+                    id="description"
+                    theme="snow"
+                  />
                   {
                     formik.errors.description && formik.touched.description && (
-                      <p className='text-danger mb-0'>{formik.errors.description}</p>
+                      <p className="text-danger mb-0">{formik.errors.description}</p>
                     )
                   }
                   <small className="text-muted">Note: Please bold the main part for clarity.</small>
                 </div>
-
                 <div className="mb-3">
                   <label htmlFor="purpose" className="form-label">
                     Purpose
@@ -96,6 +119,11 @@ const Inquiry = () => {
                     onBlur={formik.handleBlur}
                     value={formik.values.purpose}
                   />
+                  {
+                    formik.errors.purpose && formik.touched.purpose && (
+                      <p className='text-danger mb-0'>{formik.errors.purpose}</p>
+                    )
+                  }
                 </div>
 
                 <button type="submit" className="shadow-none btn btn-primary w-100 mt-3">

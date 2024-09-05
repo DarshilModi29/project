@@ -17,6 +17,7 @@ export default function Images() {
   const searchImage = async () => {
     if (selectedTags && selectedTags.value) {
       navigate(`/images/${selectedTags.value}`);
+      setImages([]);
     } else {
       navigate("/images/all");
     }
@@ -40,7 +41,7 @@ export default function Images() {
       }
     }
     getImages();
-  }, [search, selectedTags, offset]);
+  }, [search, offset]);
   return (
     <>
       <div className="container">

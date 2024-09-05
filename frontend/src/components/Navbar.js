@@ -66,7 +66,12 @@ const Navbar = () => {
       handleClose();
       alert(data.message)
     } else {
-      alert(data.message)
+      if (response.status === 401) {
+        alert(data.message);
+        navigate("/login");
+      } else {
+        alert(data.message)
+      }
     }
   }
 

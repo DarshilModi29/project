@@ -61,26 +61,6 @@ function Home() {
       </div>
 
       {/* Gallery */}
-      {/* <div className="scrollblock">
-        <div className="container-fluid pt-10">
-          <div className="row justify-content-md-center">
-            <div className="col-md-10 col-sm-12">
-              <div className="card-columns">
-                {Array.from({ length: 9 }).map((_, index) => (
-                  <div className="card card-hover h-100" key={index}>
-                    <div className="card-body">
-                      <a href="index.html">
-                        <img className="card-img-top" src={`img/photo-${index + 1}.jpg`} alt={`Card ${index + 1}`} />
-
-                      </a>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> */}
       <h2 className="text-center mb-4">Most Downloaded Images</h2>
       <ShowImages images={mostDownloads} page="home" />
       <h2 className="text-center mb-4 mt-4">Most Rated Images</h2>

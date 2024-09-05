@@ -102,7 +102,11 @@ const Inquiry = () => {
                                                 <td>{inquiry.user_id.username}</td>
                                                 <td>{inquiry.inquireFor}</td>
                                                 <TextTruncateWithModal data={inquiry.description} />
-                                                <TextTruncateWithModal data={inquiry.purpose} />
+                                                {
+                                                    inquiry.purpose ? (<td>-</td>) : (
+                                                        <TextTruncateWithModal data={inquiry.purpose} />
+                                                    )
+                                                }
                                                 <td className='text-center'>
                                                     {inquiry.status === "pending"
                                                         ? (<i className='bi bi-hourglass-split text-warning fs-5' title='Pending'></i>)

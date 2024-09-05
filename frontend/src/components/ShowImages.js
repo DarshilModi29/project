@@ -5,9 +5,11 @@ import Cookies from 'js-cookie';
 import { saveAs } from 'file-saver';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Modal, ModalHeader, ModalFooter, ModalBody, Button } from 'reactstrap';
+import { useNavigate } from "react-router-dom"
 
 const ShowImages = ({ fetchUserImages, limit, images, page = "", getSavedImages = () => null, setOffset = () => null, totalImages = 0 }) => {
 
+    const navigate = useNavigate();
     const [modal, setModal] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [source, setSource] = useState("");
@@ -34,7 +36,10 @@ const ShowImages = ({ fetchUserImages, limit, images, page = "", getSavedImages 
             }
         };
 
-        getSaved();
+        if (Cookies.get("jwt")) {
+            getSaved();
+        }
+
     }, []);
 
     const downloadImage = async (e, file, quality) => {
@@ -53,7 +58,12 @@ const ShowImages = ({ fetchUserImages, limit, images, page = "", getSavedImages 
                 saveAs(blob, image);
             } else {
                 const data = await response.json();
-                alert(data.message);
+                if (response.status === 401) {
+                    alert(data.message);
+                    navigate("/login");
+                } else {
+                    alert(data.message);
+                }
             }
         } catch (error) {
             console.log(error);
@@ -79,7 +89,12 @@ const ShowImages = ({ fetchUserImages, limit, images, page = "", getSavedImages 
                 }
                 setSavedImages(prev => prev.filter(imageId => imageId !== id));
             } else {
-                alert(data.message);
+                if (response.status === 401) {
+                    alert(data.message);
+                    navigate("/login");
+                } else {
+                    alert(data.message);
+                }
             }
         } catch (error) {
             alert(error.toString());
@@ -102,7 +117,12 @@ const ShowImages = ({ fetchUserImages, limit, images, page = "", getSavedImages 
                 alert(data.message);
                 setSavedImages(prev => [...prev, id]);
             } else {
-                alert(data.message);
+                if (response.status === 401) {
+                    alert(data.message);
+                    navigate("/login");
+                } else {
+                    alert(data.message);
+                }
             }
         } catch (error) {
             alert(error.toString());
@@ -173,6 +193,7 @@ const ShowImages = ({ fetchUserImages, limit, images, page = "", getSavedImages 
                             className="card-img-top"
                             src={`${config.SERVER_URL}/${image.isHide ? "images/other/hiddenImage.jpg" : image.url}`}
                             alt={`Card ${index + 1}`}
+                            onContextMenu={(e) => e.preventDefault()}
                         />
                         {image.isHide ? null : page !== "user" ? (
                             <>

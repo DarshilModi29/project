@@ -27,7 +27,9 @@ const Profile = () => {
             }
         }
 
-        getProfile();
+        if (Cookies.get("jwt")) {
+            getProfile();
+        }
     }, [])
     return (
         <div className="container my-4">

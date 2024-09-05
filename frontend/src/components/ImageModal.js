@@ -27,7 +27,12 @@ const ImageModal = ({ imageId, rating, src, modal, toggle, imageSize, closeModal
             if (response.ok) {
                 alert(data.message);
             } else {
-                alert(data.message);
+                if (response.status === 401) {
+                    alert(data.message);
+                    navigate("/login");
+                } else {
+                    alert(data.message);
+                }
             }
         } catch (error) {
             console.log(error);
@@ -79,7 +84,9 @@ const ImageModal = ({ imageId, rating, src, modal, toggle, imageSize, closeModal
         if (modal) {
             const quality = getQuality();
             setQualityData(quality);
-            isRated();
+            if (Cookies.get("jwt")) {
+                isRated();
+            }
         }
     }, [modal, imageSize, imageId])
 
