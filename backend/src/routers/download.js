@@ -88,7 +88,6 @@ router.get("/api/userDownload", Auth, async (req, res) => {
                 }
             },
         ]);
-        console.log(downloads);
         res.json({ data: downloads });
     } catch (error) {
         console.log(error);

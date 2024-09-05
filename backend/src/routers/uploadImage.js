@@ -82,7 +82,7 @@ router.get("/api/image/:id", Auth, async (req, res) => {
 });
 
 // fetches all images
-router.get("/api/allImages", async (req, res) => {
+router.get("/api/allImages", Auth, async (req, res) => {
     try {
         const page = parseInt(req.query.page);
         const limit = parseInt(req.query.limit);

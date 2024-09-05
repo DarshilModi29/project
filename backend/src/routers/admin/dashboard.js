@@ -53,7 +53,6 @@ router.get("/api/chartData", Auth, async (req, res) => {
                     }
                 }
             ]);
-            console.log(images);
             res.json({ data: images, start: firstWeekDate, end: lastWeekDate });
         }
     } catch (error) {

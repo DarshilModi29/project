@@ -41,7 +41,7 @@ router.get("/api/allTags", Auth, async (req, res) => {
     }
 })
 
-router.get("/api/tags", Auth, async (req, res) => {
+router.get("/api/tags", async (req, res) => {
     try {
         const { suggest } = req.query;
         const tags = await tagsSchema.find({ name: new RegExp(`^${suggest}`, 'i') }).limit(10);
