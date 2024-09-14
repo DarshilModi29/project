@@ -11,6 +11,7 @@ const savedImageModel = require("../models/saveImageSchema");
 const downloadModel = require("../models/downloadSchema");
 const ratingModel = require("../models/ratingsSchema");
 const tagsSchema = require("../models/tagsSchema");
+var oldTags;
 
 // Uploads images
 router.post("/api/uploadImage", Auth, upload.single("images"), async (req, res) => {
@@ -74,6 +75,7 @@ router.get("/api/image/:id", Auth, async (req, res) => {
     try {
         const _id = req.params.id;
         const imageData = await imageSchema.findById({ _id });
+        oldTags = imageData.tags;
         res.json({ data: imageData });
     } catch (error) {
         console.log(error);
@@ -133,11 +135,26 @@ router.patch("/api/updateImage/:id", Auth, async (req, res) => {
     try {
         const _id = req.params.id;
         const { tags, description } = req.body;
-        const imageTags = tags.split(",");
+        const tagsArr = [];
+        tags.map((tag) => {
+            tagsArr.push(tag.value);
+        });
         await imageSchema.findByIdAndUpdate({ _id }, {
-            tags: imageTags,
+            tags: tagsArr,
             description
-        })
+        });
+        oldTags.forEach(async (tag) => {
+            if (!tagsArr.includes(tag)) {
+                await tagsSchema.updateOne({ slug: tag }, { $inc: { counts: -1 } });
+            }
+        });
+
+        tagsArr.forEach(async (tag) => {
+            if (!oldTags.includes(tag)) {
+                await tagsSchema.updateOne({ slug: tag }, { $inc: { counts: 1 } });
+            }
+        });
+        res.json({ message: "Image Updated Successfully" });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Internal Server Error" });

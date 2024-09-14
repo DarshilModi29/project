@@ -70,7 +70,7 @@ const updateAverageRatings = async (imageId, ratingModel, imageSchema) => {
 
 const filterTag = (tag) => {
     const filteredTag = tag.toLowerCase();
-    const resultTag = filteredTag.replace(/ +/g, "-");
+    const resultTag = filteredTag.replace(/ +/g, "_");
     return resultTag;
 }
 
