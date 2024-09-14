@@ -6,6 +6,7 @@ import { saveAs } from 'file-saver';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Modal, ModalHeader, ModalFooter, ModalBody, Button } from 'reactstrap';
 import { useNavigate } from "react-router-dom"
+import ReactSelect from "./ReactSelect";
 
 const ShowImages = ({ fetchUserImages, limit, images, page = "", getSavedImages = () => null, setOffset = () => null, totalImages = 0 }) => {
 
@@ -17,6 +18,17 @@ const ShowImages = ({ fetchUserImages, limit, images, page = "", getSavedImages 
     const [ratings, setRatings] = useState("");
     const [imageId, setImageId] = useState("");
     const [savedImages, setSavedImages] = useState([]);
+    const [selectedTags, setSelectedTags] = useState([]);
+    const [description, setDescription] = useState("");
+    const [imageUrl, setImageUrl] = useState("");
+    const [updatedImageId, setUpdatedImageId] = useState("");
+
+    const formatTag = (tag) => {
+        return tag
+            .split('_')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+    };
 
     useEffect(() => {
         const getSaved = async () => {
@@ -141,17 +153,64 @@ const ShowImages = ({ fetchUserImages, limit, images, page = "", getSavedImages 
     const toggleModal = async (e, id) => {
         e.stopPropagation();
         setIsOpen(!isOpen);
+        setUpdatedImageId(id);
+        try {
+            const response = await fetch(`${config.SERVER_URL}/api/image/${id}`, {
+                headers: {
+                    "Authorization": `bearer ${Cookies.get("jwt")}`
+                }
+            });
+            const data = await response.json();
+            if (response.ok) {
+                console.log(data.data);
+                setDescription(data.data.description);
+                const mappedTags = data.data.tags.map(tag => ({
+                    label: formatTag(tag),
+                    value: tag
+                }));
+                setSelectedTags(mappedTags);
+                setImageUrl(data.data.url);
+            }
+        } catch (error) {
+            console.log(error);
+            alert(error.toString());
+        }
 
-        // const response = await fetch(`${config.SERVER_URL}/api/image/${id}`, {
-        //     headers: {
-        //         "Authorization": `${Cookies.get("jwt")}`
-        //     }
-        // });
-        // const data = await response.json();
     }
 
     const closeModal = () => {
         setIsOpen(false);
+        setUpdatedImageId("");
+        setDescription("");
+        setImageUrl("");
+        setSelectedTags("");
+    }
+
+    const updateImage = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await fetch(`${config.SERVER_URL}/api/updateImage/${updatedImageId}`, {
+                method: 'PATCH',
+                headers: {
+                    "Authorization": `bearer ${Cookies.get("jwt")}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    description: description,
+                    tags: selectedTags
+                })
+            });
+            const data = await response.json();
+            if (response.ok) {
+                alert(data.message);
+                closeModal();
+            } else {
+                alert(data.message);
+            }
+        } catch (error) {
+            console.log(error);
+            alert(error.toString());
+        }
     }
 
     const deleteImage = async (e, id) => {
@@ -268,10 +327,30 @@ const ShowImages = ({ fetchUserImages, limit, images, page = "", getSavedImages 
                 </div>
             )}
             <ImageModal rating={ratings} imageId={imageId} downloadImage={downloadImage} src={source} toggle={toggle} modal={modal} imageSize={imgSize} closeModal={handleClose} />
-            <Modal isOpen={isOpen} toggle={toggleModal}>
+            <Modal isOpen={isOpen} toggle={toggleModal} size='lg'>
                 <ModalHeader>Update Image</ModalHeader>
                 <ModalBody>
-
+                    <div className="row">
+                        <div className="col-md-6">
+                            <img src={`${config.SERVER_URL}/${imageUrl}`} className='img-fluid' alt='' />
+                        </div>
+                        <div className="col-md-6 d-flex align-items-center">
+                            <form className='w-100'>
+                                <div className="mb-3">
+                                    <label className='form-label'>Tags</label>
+                                    <ReactSelect isMulti={true} setSelectedTags={setSelectedTags} selectedTags={selectedTags} />
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="description" className='form-label'>Descripiton</label>
+                                    <textarea className='form-control shadow-none' value={description}
+                                        onChange={(e) => setDescription(e.target.value)} id='description'
+                                    >
+                                    </textarea>
+                                </div>
+                                <button type='submit' className="btn btn-primary shadow-none" onClick={(e) => updateImage(e)}>Update</button>
+                            </form>
+                        </div>
+                    </div>
                 </ModalBody>
                 <ModalFooter>
                     <Button onClick={closeModal}>Close</Button>

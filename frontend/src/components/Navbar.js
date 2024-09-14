@@ -145,7 +145,7 @@ const Navbar = () => {
               <ReactSelect isMulti={true} placeholder="Enter Tags..." selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
             </FormGroup>
             <FormGroup>
-              <Label>description</Label>
+              <Label>Description</Label>
               <Input type='textarea' className='shadow-none py-1 px-2' value={description} onChange={(e) => setDescription(e.target.value)} />
             </FormGroup>
           </ModalBody>
