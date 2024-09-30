@@ -52,4 +52,19 @@ router.get("/api/tags", async (req, res) => {
     }
 })
 
+router.delete("/api/removeTag/:id", Auth, async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (isAdmin(req.user)) {
+            await tagsSchema.findByIdAndDelete(id);
+            return res.json({ message: "Tag has been deleted" });
+        } else {
+            return res.status(403).json({ message: "You are not authorized to perform this action" });
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+})
+
 module.exports = router;
