@@ -79,19 +79,21 @@ const isAdmin = (user) => {
 }
 
 const getFirstWeekDate = (currentDate) => {
-    const currentDay = new Date(currentDate).getDay();
-    const diff = currentDay === 0 ? 6 : currentDay - 1;
-    const firstWeekDate = new Date(currentDate);
-    firstWeekDate.setDate(firstWeekDate.getDate() - diff);
-    return firstWeekDate;
-}
+    const date = new Date(currentDate);
+    const day = date.getDay();
+    const diff = day === 0 ? -6 : 1 - day;
+    date.setDate(date.getDate() + diff);
+    date.setUTCHours(0, 0, 0, 0);
+    return date;
+};
 
 const getLastWeekDate = (currentDate) => {
-    const lastWeekDate = new Date(currentDate);
-    const firstWeekDate = new Date(getFirstWeekDate(currentDate));
-    lastWeekDate.setDate(firstWeekDate.getDate() + 6);
+    const firstWeekDate = getFirstWeekDate(currentDate);
+    const lastWeekDate = new Date(firstWeekDate);
+    lastWeekDate.setDate(lastWeekDate.getDate() + 6);
+    lastWeekDate.setUTCHours(23, 59, 59, 999);
     return lastWeekDate;
-}
+};
 
 module.exports = {
     uploadImage,
