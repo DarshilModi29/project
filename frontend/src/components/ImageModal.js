@@ -4,6 +4,7 @@ import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from 'reactstrap
 import config from '../admin/components/Config';
 import { Rating } from 'react-simple-star-rating';
 import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
 
 const ImageModal = ({ imageId, rating, src, modal, toggle, imageSize, closeModal, downloadImage }) => {
     const [qualityData, setQualityData] = useState([]);
@@ -12,6 +13,8 @@ const ImageModal = ({ imageId, rating, src, modal, toggle, imageSize, closeModal
     const [ratingValue, setRatingValue] = useState(0);
     const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
     const image = src.split("/").at(-1);
+
+    const navigate = useNavigate();
 
     const handleRating = async (rate) => {
         try {
@@ -96,7 +99,7 @@ const ImageModal = ({ imageId, rating, src, modal, toggle, imageSize, closeModal
                 <ModalFooter className='border-bottom'>
                     <div>
                         <ButtonGroup>
-                            <Button color='white' className='border-dark'>Download</Button>
+                            <Button color='white' className='border-dark' onClick={(e) => downloadImage(e, image, imageSize)}>Download</Button>
                             <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
                                 <DropdownToggle caret color='white' className='border-dark border-start-0 rounded-0 rounded-end-1'></DropdownToggle>
                                 <DropdownMenu style={{ fontSize: "0.88rem" }}>

@@ -67,7 +67,7 @@ const Tags = () => {
     });
 
     const removeTag = async (id) => {
-        const response = await fetch(`${config.SERVER_URL}/api/remove-sub-admin/${id}`, {
+        const response = await fetch(`${config.SERVER_URL}/api/removeTag/${id}`, {
             method: "DELETE",
             headers: {
                 "Authorization": `bearer ${Cookies.get("jwt")}`
