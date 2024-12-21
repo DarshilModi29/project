@@ -19,6 +19,7 @@ export default function Images() {
       navigate(`/images/${selectedTags.value}`);
       setImages([]);
     } else {
+      setImages([]);
       navigate("/images/all");
     }
   }
