@@ -63,7 +63,7 @@ router.post("/api/replyInquiry/:id", Auth, async (req, res) => {
                 await inquirySchema.findByIdAndUpdate(id, { status: "accepted" }).populate("user_id", "_id email");
                 return res.json({ message: "Inquiry has been approved" });
             } else {
-                const { subject, text } = req.body.inquiry;
+                const { subject, text } = req.body;
                 const data = await inquirySchema.findByIdAndUpdate(id, { status: "accepted" }).populate("user_id", "_id email");
                 verifyEmail(data.user_id.email, subject, text);
                 return res.json({ message: "Inquiry reply has been sent" });

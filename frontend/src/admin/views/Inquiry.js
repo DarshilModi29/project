@@ -103,7 +103,7 @@ const Inquiry = () => {
                                                 <td>{inquiry.inquireFor}</td>
                                                 <TextTruncateWithModal data={inquiry.description} />
                                                 {
-                                                    inquiry.purpose ? (<td>-</td>) : (
+                                                    !inquiry.purpose ? (<td>-</td>) : (
                                                         <TextTruncateWithModal data={inquiry.purpose} />
                                                     )
                                                 }
