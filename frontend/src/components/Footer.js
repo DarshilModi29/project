@@ -52,16 +52,4 @@ const linkStyle = {
   transition: 'color 0.3s ease',
 };
 
-// const linkHoverStyle = {
-//   color: '#FFD700', // Gold for hover effect
-// };
-
-// const handleHover = (event) => {
-//   event.target.style.color = linkHoverStyle.color;
-// };
-
-// const handleMouseOut = (event) => {
-//   event.target.style.color = linkStyle.color;
-// };
-
 export default Footer;

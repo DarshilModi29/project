@@ -43,7 +43,7 @@ const Auth = async (req, res, next) => {
             });
         }
         if (user && user.isBanned) {
-            return res.status(401).json({ "message": `Your account is banned untill. You can never access this account` });
+            return res.status(401).json({ "message": `Your account is banned. You can never access this account` });
         }
         req.user = user;
         next();
