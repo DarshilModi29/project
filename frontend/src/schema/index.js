@@ -31,6 +31,16 @@ export const inquirySchema = Yup.object({
 
 });
 
+export const contestSchema = Yup.object({
+    title: Yup.string().trim().required("Please give title to the contest"),
+    description: Yup.string().trim().required("Please describe contest for more information"),
+    start_date: Yup.date().required("Please select starting date of the contest"),
+    end_date: Yup.date().required("Please select ending date of the contest"),
+    rules: Yup.string().trim().required("Need rules & guidelines for contest"),
+    contest_size: Yup.number().nullable().min(0, "Negative numbers are not allowed"),
+    prize_money: Yup.number().nullable().min(0, "Negative numbers are not allowed"),
+})
+
 
 export const extensionFilter = (file) => {
     if (!file) return false;

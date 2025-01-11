@@ -18,6 +18,12 @@ html {
   color: #666;
 }
 
+.remove-arrows::-webkit-outer-spin-button,
+.remove-arrows::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 a:link,
 a:hover,
 a:visited {

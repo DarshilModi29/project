@@ -11,6 +11,8 @@ const Images = lazy(() => import("../views/Images.js"));
 const Inquiry = lazy(() => import("../views/Inquiry.js"));
 const SubAdmin = lazy(() => import("../views/SubAdmin.js"));
 const Tags = lazy(() => import("../views/Tags.js"));
+const Contest = lazy(() => import("../views/Contest.js"));
+const ContestDetails = lazy(() => import("../views/ContestDetails.js"));
 
 /*****Routes******/
 const AdminRoutes = [
@@ -25,6 +27,8 @@ const AdminRoutes = [
       { path: "/inquiries", element: <Inquiry /> },
       { path: "/sub-admins", element: <SubAdmin /> },
       { path: "/tags", element: <Tags /> },
+      { path: "/contests", element: <Contest /> },
+      { path: "/contest-details", element: <ContestDetails /> },
       { path: "*", element: <Navigate to="/dashboard" /> }, // Handle unknown routes
     ],
   },

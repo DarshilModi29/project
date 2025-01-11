@@ -32,6 +32,11 @@ const navigation = [
     href: "/tags",
     icon: "bi bi-tags"
   },
+  {
+    title: "Contests",
+    href: "/contests",
+    icon: "bi bi-trophy"
+  },
 ];
 
 const Sidebar = () => {
