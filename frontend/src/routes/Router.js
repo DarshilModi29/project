@@ -15,7 +15,9 @@ const UserImages = lazy(() => import("../views/UserProfile/Image"));
 const UserInquiry = lazy(() => import("../views/UserProfile/Inquiry"));
 const Downloads = lazy(() => import("../views/UserProfile/Downloads"));
 const SavedImages = lazy(() => import("../views/UserProfile/SavedImages"));
-const Profile = lazy(() => import("../components/Profile"))
+const Profile = lazy(() => import("../components/Profile"));
+const ContestDetail = lazy(() => import("../views/ContestDetails"));
+const Contest = lazy(() => import("../views/Contest"));
 
 const UserRoutes = [
     {
@@ -26,10 +28,12 @@ const UserRoutes = [
             { path: "/home", element: <Home /> },
             { path: "/about", element: <About /> },
             { path: "/images/:search", element: <Images /> },
+            { path: "/contest", element: <Contest /> },
             { path: "/inquiry", element: <Inquiry /> },
             { path: "/login", element: <Login /> },
             { path: "/register", element: <Signup /> },
             { path: "/verify", element: <VerifyEmail /> },
+            { path: "/contest-details", element: <ContestDetail /> },
             {
                 path: "/profile",
                 element: <Profile />,

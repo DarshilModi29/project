@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Row, Col, Button, Card, CardBody, CardTitle, CardSubtitle, Modal, ModalBody, ModalFooter, Input, ModalHeader, Label, FormGroup, Form } from "reactstrap";
+import { Row, Col, Button, Card, CardBody, CardTitle, CardSubtitle, Modal, ModalBody, ModalFooter, Input, ModalHeader, Label, FormGroup, Form, Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
 import { useNavigate } from "react-router-dom";
 import config from '../components/Config';
 import { useFormik } from 'formik';
@@ -23,6 +23,7 @@ const Contest = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [contests, setContests] = useState([]);
     const [contestId, setContestId] = useState("");
+    const [activeNav, setActiveNav] = useState("1");
     const navigate = useNavigate();
 
     const toggleModal = () => {
@@ -133,7 +134,9 @@ const Contest = () => {
 
     const fetchContests = useCallback(async () => {
         try {
-            const response = await fetch(`${config.SERVER_URL}/api/all-contests`);
+            const response = activeNav === "1" ?
+                await fetch(`${config.SERVER_URL}/api/all-contests`) :
+                await fetch(`${config.SERVER_URL}/api/finished-contests`);
             const data = await response.json();
             if (response.ok) {
                 setContests(data.data);
@@ -144,7 +147,7 @@ const Contest = () => {
             console.log(error);
             alert(error.toString());
         }
-    }, []);
+    }, [activeNav]);
 
     useEffect(() => {
         fetchContests();
@@ -170,45 +173,111 @@ const Contest = () => {
                                 }}><i className='bi bi-plus-lg'></i> Add</Button>
                             </div>
 
-                            {
-                                contests?.map((con, index) => {
-                                    const stat_class = con.status === "Not Started" ?
-                                        "text-primary" : con.status === "Canceled" ?
-                                            "text-danger" : "text-success";
-                                    return (
-                                        <div key={index} className="bg-light p-3 rounded mt-2">
-                                            <Row>
-                                                <Col md="8">
-                                                    <p className="m-0 h5">{con.title}</p>
-                                                    <p className='m-0 mb-2'>{con.description}</p>
-                                                    <hr className='my-2' />
-                                                    <p className={`fw-bold ${stat_class}`} style={{ fontSize: "1.1rem" }}>{con.status}</p>
-                                                </Col>
-                                                <Col md="4">
-                                                    <p className='h6'>Contest Size: {con.joined}/{con.contest_size}</p>
-                                                    <p className='h6'>Prize Money: ₹{con.prize_money}</p>
-                                                    <hr className='my-2' />
-                                                    <p className='h6'>Start: {new Date(con.start_date).toLocaleDateString('en-GB')}</p>
-                                                    <p className='h6'>End: {new Date(con.end_date).toLocaleDateString('en-GB')}</p>
-                                                </Col>
-                                            </Row>
-                                            {
-                                                con.winner ?
-                                                    <div className="text-center h4 text-primary">Winner: {con.winner}</div>
-                                                    : ""
-                                            }
-                                            <Button color='primary' className='me-1' onClick={() => {
-                                                navigate(`/contest-details?id=${con._id}`)
-                                            }}>More Details</Button>
-                                            <Button color='warning' className='me-1' onClick={() => {
-                                                editContest(con._id);
-                                                toggleModal();
-                                            }}>Edit</Button>
-                                            <Button color='danger' onClick={() => deleteContest(con._id)}>Delete</Button>
-                                        </div>
-                                    )
-                                })
-                            }
+                            <div className="contest-navs mt-3">
+                                <Nav justified pills>
+                                    <NavItem>
+                                        <NavLink active={activeNav === "1"} onClick={() => {
+                                            setActiveNav("1");
+                                            setContests([]);
+                                        }} href="#">
+                                            Live Contests
+                                        </NavLink>
+                                    </NavItem>
+                                    <NavItem>
+                                        <NavLink active={activeNav === "2"} onClick={() => {
+                                            setActiveNav("2");
+                                            setContests([]);
+                                        }} href="#">
+                                            Finished Contests
+                                        </NavLink>
+                                    </NavItem>
+                                </Nav>
+                            </div>
+                            <div className="contest-tabs mt-4">
+                                <TabContent activeTab={activeNav}>
+                                    <TabPane tabId={"1"}>
+                                        {
+                                            contests.length > 0 ?
+                                                contests?.map((con, index) => {
+                                                    const stat_class = con.status === "Not Started" ?
+                                                        "text-primary" : con.status === "Canceled" ?
+                                                            "text-danger" : "text-success";
+                                                    return (
+                                                        <div key={index} className="bg-light p-3 rounded mt-2">
+                                                            <Row>
+                                                                <Col md="8">
+                                                                    <p className="m-0 h5">{con.title}</p>
+                                                                    <p className='m-0 mb-2'>{con.description}</p>
+                                                                    <hr className='my-2' />
+                                                                    <p className={`fw-bold ${stat_class}`} style={{ fontSize: "1.1rem" }}>{con.status}</p>
+                                                                </Col>
+                                                                <Col md="4">
+                                                                    <p className='h6'>Contest Size: {con.joined}/{con.contest_size}</p>
+                                                                    <p className='h6'>Prize Money: ₹{con.prize_money}</p>
+                                                                    <hr className='my-2' />
+                                                                    <p className='h6'>Start: {new Date(con.start_date).toLocaleDateString('en-GB')}</p>
+                                                                    <p className='h6'>End: {new Date(con.end_date).toLocaleDateString('en-GB')}</p>
+                                                                </Col>
+                                                            </Row>
+                                                            <Button color='primary' className='me-1' onClick={() => {
+                                                                navigate(`/contest-details?id=${con._id}`)
+                                                            }}>More Details</Button>
+                                                            {
+                                                                con.status === "Started" ? "" : (
+                                                                    <>
+                                                                        <Button color='warning' className='me-1' onClick={() => {
+                                                                            editContest(con._id);
+                                                                            toggleModal();
+                                                                        }}>Edit</Button>
+                                                                    </>
+                                                                )
+                                                            }
+                                                            <Button color='danger' onClick={() => deleteContest(con._id)}>Delete</Button>
+                                                        </div>
+                                                    )
+                                                }) : (<h5 className="text-center">No contest available</h5>)
+                                        }
+                                    </TabPane>
+                                    <TabPane tabId={"2"}>
+                                        {
+                                            contests.length > 0 ?
+                                                contests?.map((con, index) => {
+                                                    const stat_class = con.status === "Not Started" ?
+                                                        "text-primary" : con.status === "Canceled" ?
+                                                            "text-danger" : "text-success";
+                                                    return (
+                                                        <div key={index} className="bg-light p-3 rounded mt-2">
+                                                            <Row>
+                                                                <Col md="8">
+                                                                    <p className="m-0 h5">{con.title}</p>
+                                                                    <p className='m-0 mb-2'>{con.description}</p>
+                                                                    <hr className='my-2' />
+                                                                    <p className={`fw-bold ${stat_class}`} style={{ fontSize: "1.1rem" }}>{con.status}</p>
+                                                                </Col>
+                                                                <Col md="4">
+                                                                    <p className='h6'>Contest Size: {con.joined}/{con.contest_size}</p>
+                                                                    <p className='h6'>Prize Money: ₹{con.prize_money}</p>
+                                                                    <hr className='my-2' />
+                                                                    <p className='h6'>Start: {new Date(con.start_date).toLocaleDateString('en-GB')}</p>
+                                                                    <p className='h6'>End: {new Date(con.end_date).toLocaleDateString('en-GB')}</p>
+                                                                </Col>
+                                                            </Row>
+                                                            {
+                                                                con.winner ?
+                                                                    <div className="text-center h4 text-primary">Winner: {con.winner.username}</div>
+                                                                    : ""
+                                                            }
+                                                            <Button color='primary' className='me-1' onClick={() => {
+                                                                navigate(`/contest-details?id=${con._id}`)
+                                                            }}>More Details</Button>
+                                                            <Button color='danger' onClick={() => deleteContest(con._id)}>Delete</Button>
+                                                        </div>
+                                                    )
+                                                }) : (<h5 className="text-center">No contest finished</h5>)
+                                        }
+                                    </TabPane>
+                                </TabContent>
+                            </div>
                         </CardBody>
                     </Card>
                 </Col>

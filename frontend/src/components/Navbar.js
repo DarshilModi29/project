@@ -21,6 +21,10 @@ const routes = [{
 {
   path: "/about",
   component: "About",
+},
+{
+  path: "/contest",
+  component: "Contest",
 }];
 
 const Navbar = () => {

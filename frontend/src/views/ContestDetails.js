@@ -1,13 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import config from '../components/Config';
-import Participants from '../components/dashboard/Participants';
+import config from '../admin/components/Config';
+import Participants from '../components/Participants';
 
 const ContestDetails = () => {
     const [searchParam] = useSearchParams();
     const [contestData, setContestData] = useState([]);
     const id = searchParam.get("id");
     const navigate = useNavigate();
+    const isEnded = contestData.status === "Ended";
 
     const fetchContest = useCallback(async () => {
         try {
@@ -24,19 +25,19 @@ const ContestDetails = () => {
 
     useEffect(() => {
         fetchContest();
-    }, [fetchContest])
+    }, [fetchContest]);
 
     return (
         <div className="container">
             <div className="back-button mb-2">
                 <i role="button" className='bi bi-arrow-left fs-3' onClick={() => {
-                    navigate("/contests");
+                    navigate("/contest");
                 }}></i>
             </div>
             {contestData ? (
                 <>
                     <div className="card shadow">
-                        <div className="card-header bg-primary text-white text-center">
+                        <div className="card-header bg-black-50 text-white text-center">
                             <h2>{contestData.title}</h2>
                         </div>
                         <div className="card-body">
@@ -95,7 +96,7 @@ const ContestDetails = () => {
                         </div>
                     </div>
                     <div className="mt-4">
-                        <Participants contestId={id} />
+                        <Participants isEnded={isEnded} contestId={id} />
                     </div>
                 </>
             ) : (

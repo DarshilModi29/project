@@ -42,7 +42,7 @@ const Dropzone = (props) => {
         isDragAccept,
         isDragReject,
         isDragActive,
-    } = useDropzone({ onDrop });
+    } = useDropzone({ onDrop, multiple: props.multiple });
 
     const style = useMemo(() => ({
         ...baseStyle,
