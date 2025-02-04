@@ -14,6 +14,7 @@ const inquiryRouter = require("./src/routers/inquiry");
 const tagsRouter = require("./src/routers/tags");
 const dashboardRouter = require("./src/routers/admin/dashboard");
 const contestRouter = require("./src/routers/contest");
+const paymentRouter = require("./src/routers/payment");
 
 const app = express();
 const port = process.env.PORT || 8000
@@ -33,6 +34,7 @@ app.use(inquiryRouter);
 app.use(tagsRouter);
 app.use(dashboardRouter);
 app.use(contestRouter);
+app.use(paymentRouter);
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);

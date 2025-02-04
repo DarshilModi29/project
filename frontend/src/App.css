@@ -333,3 +333,20 @@ h2 {
     font-size: 13px !important;
   }
 }
+
+.w-80 {
+  width: 80% !important;
+}
+
+@media (max-width: 768px) {
+  .premium-feature {
+    width: 100% !important;
+    padding: 20px 10px !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .container-fluid.wrapper {
+    padding: 30px 5px !important;
+  }
+}

@@ -105,13 +105,14 @@ const ImageModal = ({ imageId, rating, src, modal, toggle, imageSize, closeModal
                                 <DropdownMenu style={{ fontSize: "0.88rem" }}>
                                     {
                                         qualityData.map((data, index) => {
+                                            const disabled = !Cookies.get("isPremium") && data.size === "Small" ? false : Cookies.get("isPremium") ? false : true;
                                             return (
-                                                <DropdownItem key={index} onClick={(e) => downloadImage(e, image, `${data.width}x${data.height}`)}>{data.size} ({data.width}x{data.height})</DropdownItem>
+                                                <DropdownItem disabled={disabled} key={index} onClick={(e) => downloadImage(e, image, `${data.width}x${data.height}`)}>{data.size} ({data.width}x{data.height})</DropdownItem>
                                             )
                                         })
                                     }
                                     <DropdownItem divider />
-                                    <DropdownItem onClick={(e) => downloadImage(e, image, imageSize)}>Original ({imageSize})</DropdownItem>
+                                    <DropdownItem disabled={!Cookies.get("isPremium")} onClick={(e) => downloadImage(e, image, imageSize)}>Original ({imageSize})</DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
                         </ButtonGroup>

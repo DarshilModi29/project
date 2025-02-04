@@ -18,6 +18,7 @@ const SavedImages = lazy(() => import("../views/UserProfile/SavedImages"));
 const Profile = lazy(() => import("../components/Profile"));
 const ContestDetail = lazy(() => import("../views/ContestDetails"));
 const Contest = lazy(() => import("../views/Contest"));
+const Premium = lazy(() => import("../views/Premium"));
 
 const UserRoutes = [
     {
@@ -34,6 +35,7 @@ const UserRoutes = [
             { path: "/register", element: <Signup /> },
             { path: "/verify", element: <VerifyEmail /> },
             { path: "/contest-details", element: <ContestDetail /> },
+            { path: "/premium", element: <Premium /> },
             {
                 path: "/profile",
                 element: <Profile />,

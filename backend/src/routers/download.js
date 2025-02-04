@@ -18,18 +18,50 @@ router.post("/api/downloadImage", Auth, async (req, res) => {
         }
 
         const image_id = await imageSchema.findOne({ url: `images/new_images/${filename}` });
-        const fileSize = quality.split("x");
+        const [width, height] = quality.split("x").map(Number);
+        const { format } = await sharp(inputPath).metadata();
 
-        const image = sharp(inputPath);
-        const { format } = image.metadata;
-        const buffer = await image.resize(parseInt(fileSize[0]), parseInt(fileSize[1])).toBuffer();
+        var buffer;
+
+        if (req.user.isPremium) {
+            buffer = await sharp(inputPath)
+                .resize(width, height)
+                .toBuffer();
+        } else {
+            const watermarkPath = path.join(__dirname, '..', '..', 'images', 'other', 'logo.png');
+
+            const watermarkWidth = Math.max(Math.floor(width * 0.2), 50);
+            const watermark = await sharp(watermarkPath)
+                .resize(watermarkWidth)
+                .png()
+                .toBuffer();
+
+            const background = await sharp({
+                create: {
+                    width: watermarkWidth + 5,
+                    height: parseInt((watermarkWidth + 5) / 3),
+                    channels: 4,
+                    background: { r: 255, g: 255, b: 255, alpha: 0.5 }
+                }
+            }).png().toBuffer();
+
+            const finalWatermark = await sharp(background)
+                .composite([{ input: watermark, gravity: 'center' }])
+                .toBuffer();
+
+            buffer = await sharp(inputPath)
+                .resize(width, height)
+                .composite([{ input: finalWatermark, gravity: 'northeast' }])
+                .toBuffer();
+        }
+
         await Promise.all([
             new downloadSchema({
                 user_id: _id,
-                image_id: image_id,
+                image_id: image_id._id,
                 resolution: quality
             }).save(),
-            imageSchema.findByIdAndUpdate({ _id: image_id._id }, { $inc: { downloads: 1 } })
+            imageSchema.findByIdAndUpdate(image_id._id, { $inc: { downloads: 1 } })
         ]);
 
         res.set("Content-Type", `image/${format}`);

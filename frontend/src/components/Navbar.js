@@ -105,10 +105,11 @@ const Navbar = () => {
                 })
               }
             </ul>
-            <div className="d-flex">
+            <div className="d-flex align-items-center justify-content-center">
               {Cookies.get("jwt") && Cookies.get("role") === "user"
                 ?
                 <>
+                  <Link to="/premium" className='me-4 premium'>Infinite+</Link>
                   <Button type='button' onClick={toggleModal} className='me-2 border border-white shadow-none text-white' color='white'>Upload an Image</Button>
                   <Dropdown isOpen={dropdownOpen} toggle={toggle}>
                     <DropdownToggle color='transperant' className='shadow-none'>
