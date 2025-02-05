@@ -7,6 +7,7 @@ const cron = require("node-cron");
 const { upload } = require("../middleware/Multer");
 const sharp = require("sharp");
 const votesSchema = require("../models/votesSchema");
+const premiumSchema = require("../models/premiumSchema");
 const { default: mongoose } = require("mongoose");
 
 router.post("/api/create-contest", Auth, async (req, res) => {
@@ -28,6 +29,9 @@ router.post("/api/create-contest", Auth, async (req, res) => {
             }
             if (req.body.prize_money) {
                 contest["prize_money"] = req.body.prize_money;
+            }
+            if (req.body.for_premium_users) {
+                contest["forPremiumUsers"] = req.body.for_premium_users;
             }
             await contest.save();
             res.json({ message: "New contest has been created" });
@@ -106,12 +110,31 @@ router.post("/api/join-contest/:id", Auth, async (req, res) => {
     try {
         const userId = req.user._id;
         const { id } = req.params;
-        const participant = new participantSchema({
-            user: userId,
-            contest: id
-        });
-        await participant.save();
-        await contestSchema.findByIdAndUpdate(id, { $inc: { joined: 1 } });
+        const { forPremiumUsers } = await contestSchema.findById(id, { forPremiumUsers: 1 });
+        if (forPremiumUsers) {
+            const isPremiumUser = await premiumSchema.findOne({ user: userId, status: "active" });
+            if (isPremiumUser) {
+                const participant = new participantSchema({
+                    user: userId,
+                    contest: id
+                });
+                await Promise.all([
+                    participant.save(),
+                    contestSchema.findByIdAndUpdate(id, { $inc: { joined: 1 } })
+                ]);
+            } else {
+                return res.status(401).json({ status: false, message: "Please buy Infinite+ premium to join this contest" })
+            }
+        } else {
+            const participant = new participantSchema({
+                user: userId,
+                contest: id
+            });
+            await Promise.all([
+                await participant.save(),
+                await contestSchema.findByIdAndUpdate(id, { $inc: { joined: 1 } })
+            ]);
+        }
         res.json({ message: "You registerd for contest" });
     } catch (error) {
         console.log(error);

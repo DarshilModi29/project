@@ -17,6 +17,7 @@ const initVal = {
     contest_size: null,
     rules: "",
     prize_money: null,
+    for_premium_users: false
 };
 
 const Contest = () => {
@@ -102,6 +103,7 @@ const Contest = () => {
                 setFieldValue("rules", data.data.rules);
                 setFieldValue("contest_size", data.data.contest_size);
                 setFieldValue("prize_money", data.data.prize_money);
+                setFieldValue("for_premium_users", data.data.forPremiumUsers);
             }
         } catch (error) {
             console.log(error);
@@ -206,7 +208,7 @@ const Contest = () => {
                                                         <div key={index} className="bg-light p-3 rounded mt-2">
                                                             <Row>
                                                                 <Col md="8">
-                                                                    <p className="m-0 h5">{con.title}</p>
+                                                                    <p className="m-0 h5">{con.title} {con.forPremiumUsers ? (<i className='bi bi-gem premium-user-contest' title='Only Premium Users Contest'></i>) : ""}</p>
                                                                     <p className='m-0 mb-2'>{con.description}</p>
                                                                     <hr className='my-2' />
                                                                     <p className={`fw-bold ${stat_class}`} style={{ fontSize: "1.1rem" }}>{con.status}</p>
@@ -249,7 +251,7 @@ const Contest = () => {
                                                         <div key={index} className="bg-light p-3 rounded mt-2">
                                                             <Row>
                                                                 <Col md="8">
-                                                                    <p className="m-0 h5">{con.title}</p>
+                                                                    <p className="m-0 h5">{con.title} {con.forPremiumUsers ? (<i className='bi bi-gem premium-user-contest' title='Only Premium Users Contest'></i>) : ""}</p>
                                                                     <p className='m-0 mb-2'>{con.description}</p>
                                                                     <hr className='my-2' />
                                                                     <p className={`fw-bold ${stat_class}`} style={{ fontSize: "1.1rem" }}>{con.status}</p>
@@ -368,6 +370,10 @@ const Contest = () => {
                                     <p className='text-danger'>{errors.prize_money}</p>
                                 ) : null
                             }
+                        </FormGroup>
+                        <FormGroup switch>
+                            <Input type="switch" role="switch" id='for_premium_users' name='for_premium_users' checked={values.for_premium_users} onChange={(e) => setFieldValue('for_premium_users', e.target.checked)} />
+                            <Label for="for_premium_users">For Premium Users Only</Label>
                         </FormGroup>
                         <Button color="primary" className='shadow-none' type='submit'>{contestId ? "Edit" : "Add"}</Button>
                     </Form>

@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import { Container } from "reactstrap";
@@ -7,12 +7,14 @@ import config from "../admin/components/Config";
 import Cookies from "js-cookie";
 
 const FullLayout = () => {
+    const location = useLocation();
     useEffect(() => {
+        const jwt = Cookies.get("jwt");
+        const isPremium = Cookies.get("isPremium");
         let callCount = parseInt(sessionStorage.getItem("callCount")) || 0;
-        if (!Cookies.get("jwt") || callCount >= 1) {
+        if (!jwt || isPremium || callCount >= 4) {
             return;
         }
-
         const fetchUserStatus = async () => {
             try {
                 const response = await fetch(`${config.SERVER_URL}/api/checkPremium`,
@@ -23,10 +25,8 @@ const FullLayout = () => {
                         }
                     });
                 const data = await response.json();
-                if (response.ok) {
-                    if (data.status) {
-                        Cookies.set("isPremium", "true", { expires: data.expiredDays });
-                    }
+                if (response.ok && data.status) {
+                    Cookies.set("isPremium", "true");
                     sessionStorage.setItem("callCount", (callCount + 1).toString());
                 }
             } catch (error) {
@@ -35,7 +35,7 @@ const FullLayout = () => {
         }
 
         fetchUserStatus();
-    }, [])
+    }, [location.pathname]);
 
     return (
         <main>

@@ -38,7 +38,7 @@ const ContestDetails = () => {
                 <>
                     <div className="card shadow">
                         <div className="card-header bg-black-50 text-white text-center">
-                            <h2>{contestData.title}</h2>
+                            <h2>{contestData.title} {contestData.forPremiumUsers ? (<i className='bi bi-gem' title='Only Premium Users Contest'></i>) : ""}</h2>
                         </div>
                         <div className="card-body">
                             <p className="lead text-muted">{contestData.description}</p>

@@ -83,6 +83,7 @@ const Navbar = () => {
     Cookies.remove("jwt");
     Cookies.remove("profilePic");
     Cookies.remove("role");
+    Cookies.remove("isPremium");
     navigate("/");
   }
   return (

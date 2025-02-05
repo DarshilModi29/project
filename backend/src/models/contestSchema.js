@@ -36,6 +36,10 @@ const contestSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "USER",
         default: null
+    },
+    forPremiumUsers: {
+        type: Boolean,
+        default: false
     }
 });
 

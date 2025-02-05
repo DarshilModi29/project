@@ -83,7 +83,12 @@ const Contest = () => {
                 fetchContests();
                 checkParticipant();
             } else {
-                alert(data.message);
+                if (!data.status) {
+                    alert(data.message);
+                    navigate("/premium");
+                } else {
+                    alert(data.message);
+                }
             }
         } catch (error) {
             console.log(error);
@@ -138,7 +143,7 @@ const Contest = () => {
                                 <div className="p-3 rounded mt-2 bg-white">
                                     <Row>
                                         <Col md="8">
-                                            <p className="m-0 h5">{con.title}</p>
+                                            <p className="m-0 h5">{con.title} {con.forPremiumUsers ? (<i className='bi bi-gem premium-user-contest' title='Only Premium Users Contest'></i>) : ""}</p>
                                             <p className='m-0 mb-2'>{con.description}</p>
                                             <hr className='my-2' />
                                             <p className={`fw-bold ${stat_class}`} style={{ fontSize: "1.1rem" }}>{con.status}</p>
@@ -166,7 +171,12 @@ const Contest = () => {
                                                     setIsOpen(true);
                                                     setImages([]);
                                                     setContestId(con._id);
-                                                }}>Upload Image</Button> : <Button color='success' onClick={() => joinContest(con._id)}>Join</Button>
+                                                }}>Upload Image</Button> : <Button disabled={con.forPremiumUsers && !Cookies.get("isPremium")} color='success' onClick={() => joinContest(con._id)}>{con.forPremiumUsers && !Cookies.get("isPremium") ?
+                                                    (
+                                                        <>
+                                                            <i className='bi bi-lock'></i> Join
+                                                        </>
+                                                    ) : "Join"}</Button>
                                             : ""
                                     }
                                 </div>

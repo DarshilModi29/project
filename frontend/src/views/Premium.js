@@ -45,7 +45,7 @@ const Premium = () => {
                 const validateJson = await validateRes.json();
                 if (validateRes.ok) {
                     alert(validateJson.message);
-                    Cookies.set("isPremium", "true", { expires: parseInt(validateJson.expired) });
+                    Cookies.set("isPremium", "true");
                 } else {
                     alert(validateJson.message);
                 }
