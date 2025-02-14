@@ -33,6 +33,10 @@ const imageSchema = new mongoose.Schema({
     isHide: {
         type: Boolean,
         default: false
+    },
+    onlyPremium: {
+        type: Boolean,
+        default: false
     }
 }, { timestamps: true });
 

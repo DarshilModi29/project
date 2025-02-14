@@ -13,6 +13,7 @@ const SubAdmin = lazy(() => import("../views/SubAdmin.js"));
 const Tags = lazy(() => import("../views/Tags.js"));
 const Contest = lazy(() => import("../views/Contest.js"));
 const ContestDetails = lazy(() => import("../views/ContestDetails.js"));
+const InfinitePro = lazy(() => import("../views/InfinitePro.js"));
 
 /*****Routes******/
 const AdminRoutes = [
@@ -29,6 +30,7 @@ const AdminRoutes = [
       { path: "/tags", element: <Tags /> },
       { path: "/contests", element: <Contest /> },
       { path: "/contest-details", element: <ContestDetails /> },
+      { path: "/infinite-pro", element: <InfinitePro /> },
       { path: "*", element: <Navigate to="/dashboard" /> }, // Handle unknown routes
     ],
   },

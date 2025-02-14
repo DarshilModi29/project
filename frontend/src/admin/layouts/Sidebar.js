@@ -37,6 +37,11 @@ const navigation = [
     href: "/contests",
     icon: "bi bi-trophy"
   },
+  {
+    title: "Infinite Pro",
+    href: "/infinite-pro",
+    icon: "bi bi-star-fill"
+  },
 ];
 
 const Sidebar = () => {

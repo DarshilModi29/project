@@ -6,7 +6,7 @@ import { Rating } from 'react-simple-star-rating';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 
-const ImageModal = ({ imageId, rating, src, modal, toggle, imageSize, closeModal, downloadImage }) => {
+const ImageModal = ({ imageId, rating, src, modal, toggle, imageSize, closeModal, downloadImage, onlyPremium }) => {
     const [qualityData, setQualityData] = useState([]);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [readonly, setReadonly] = useState(false);
@@ -98,24 +98,32 @@ const ImageModal = ({ imageId, rating, src, modal, toggle, imageSize, closeModal
             <Modal isOpen={modal} toggle={toggle} backdrop={"static"} keyboard={false} centered>
                 <ModalFooter className='border-bottom'>
                     <div>
-                        <ButtonGroup>
-                            <Button color='white' className='border-dark' onClick={(e) => downloadImage(e, image, imageSize)}>Download</Button>
-                            <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
-                                <DropdownToggle caret color='white' className='border-dark border-start-0 rounded-0 rounded-end-1'></DropdownToggle>
-                                <DropdownMenu style={{ fontSize: "0.88rem" }}>
-                                    {
-                                        qualityData.map((data, index) => {
-                                            const disabled = !Cookies.get("isPremium") && data.size === "Small" ? false : Cookies.get("isPremium") ? false : true;
-                                            return (
-                                                <DropdownItem disabled={disabled} key={index} onClick={(e) => downloadImage(e, image, `${data.width}x${data.height}`)}>{data.size} ({data.width}x{data.height})</DropdownItem>
-                                            )
-                                        })
-                                    }
-                                    <DropdownItem divider />
-                                    <DropdownItem disabled={!Cookies.get("isPremium")} onClick={(e) => downloadImage(e, image, imageSize)}>Original ({imageSize})</DropdownItem>
-                                </DropdownMenu>
-                            </Dropdown>
-                        </ButtonGroup>
+                        {
+                            onlyPremium ? (
+                                <Button color="white" className='border-dark' onClick={() => navigate("/premium")}>
+                                    <i className='bi bi-lock-fill'></i>
+                                </Button>
+                            ) : (
+                                <ButtonGroup>
+                                    <Button color='white' className='border-dark' onClick={(e) => downloadImage(e, image, imageSize)}>Download</Button>
+                                    <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
+                                        <DropdownToggle caret color='white' className='border-dark border-start-0 rounded-0 rounded-end-1'></DropdownToggle>
+                                        <DropdownMenu style={{ fontSize: "0.88rem" }}>
+                                            {
+                                                qualityData.map((data, index) => {
+                                                    const disabled = !Cookies.get("isPremium") && data.size === "Small" ? false : Cookies.get("isPremium") ? false : true;
+                                                    return (
+                                                        <DropdownItem disabled={disabled} key={index} onClick={(e) => downloadImage(e, image, `${data.width}x${data.height}`)}>{data.size} ({data.width}x{data.height})</DropdownItem>
+                                                    )
+                                                })
+                                            }
+                                            <DropdownItem divider />
+                                            <DropdownItem disabled={!Cookies.get("isPremium")} onClick={(e) => downloadImage(e, image, imageSize)}>Original ({imageSize})</DropdownItem>
+                                        </DropdownMenu>
+                                    </Dropdown>
+                                </ButtonGroup>
+                            )
+                        }
                     </div>
                 </ModalFooter>
                 <ModalBody className='px-5'>

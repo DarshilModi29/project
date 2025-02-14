@@ -94,7 +94,7 @@ router.get("/api/checkPremium", Auth, async (req, res) => {
     }
 })
 
-cron.schedule("0 0 * * *", async () => {
+cron.schedule("0 0 * * * *", async () => {
     try {
         const todayDate = new Date();
         todayDate.setUTCHours(0, 0, 0, 0);

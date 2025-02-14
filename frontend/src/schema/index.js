@@ -39,8 +39,15 @@ export const contestSchema = Yup.object({
     rules: Yup.string().trim().required("Need rules & guidelines for contest"),
     contest_size: Yup.number().nullable().min(0, "Negative numbers are not allowed"),
     prize_money: Yup.number().nullable().min(0, "Negative numbers are not allowed"),
-})
+});
 
+export const infinteProSchema = Yup.object({
+    email: Yup.string().trim().email().required("Please enter email"),
+    phn_number: Yup.string().trim().min(10, "Phone Number must be 10 character long").max(10, "Phone Number must be 10 character long").required("Please enter your phone number").matches(/^[6-9]\d{9}$/, "Please enter valid Mobile Number"),
+    upi: Yup.string().trim().required("Please enter your UPI ID").matches(/^[a-zA-Z0-9._%+-]{3,50}@[a-zA-Z]{2,}$/, "Please enter a valid UPI ID"),
+    state: Yup.string().required("Please select your state"),
+    city: Yup.string().required("Please select your city"),
+});
 
 export const extensionFilter = (file) => {
     if (!file) return false;

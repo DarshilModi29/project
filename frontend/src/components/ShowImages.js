@@ -21,6 +21,7 @@ const ShowImages = ({ fetchUserImages, limit, images, page = "", getSavedImages 
     const [selectedTags, setSelectedTags] = useState([]);
     const [description, setDescription] = useState("");
     const [imageUrl, setImageUrl] = useState("");
+    const [onlyForPremium, setOnlyForPremium] = useState("");
     const [updatedImageId, setUpdatedImageId] = useState("");
 
     const formatTag = (tag) => {
@@ -142,12 +143,13 @@ const ShowImages = ({ fetchUserImages, limit, images, page = "", getSavedImages 
         }
     };
 
-    const toggle = (id, imgSrc, imageSize, rating) => {
+    const toggle = (id, imgSrc, imageSize, rating, onlyPremium) => {
         setModal(!modal);
         setImageId(id);
         setSource(imgSrc);
         setImgSize(imageSize);
         setRatings(rating);
+        setOnlyForPremium(onlyPremium);
     };
 
     const toggleModal = async (e, id) => {
@@ -246,7 +248,7 @@ const ShowImages = ({ fetchUserImages, limit, images, page = "", getSavedImages 
     const renderImage = (image, index) => {
         return (
             <div className="card h-100 border-0 shadow" key={index}>
-                <div className="card-body p-0 img-body" onClick={() => toggle(image._id, image.url, image.resolution, image.rating)}>
+                <div className="card-body p-0 img-body" onClick={() => toggle(image._id, image.url, image.resolution, image.rating, image.onlyPremium)}>
                     <div className="position-relative">
                         <img
                             className="card-img-top"
@@ -257,15 +259,46 @@ const ShowImages = ({ fetchUserImages, limit, images, page = "", getSavedImages 
                         {image.isHide ? null : page !== "user" ? (
                             <>
                                 <div className='overlay overlay-position'>
-                                    <button
-                                        className='btn btn-light shadow-none me-1'
-                                        onClick={(e) => savedImages.includes(image._id) ? unsaveImage(e, image._id) : saveImage(e, image._id)}
-                                    >
-                                        <i className={`bi ${savedImages.includes(image._id) ? "bi-bookmark-fill" : "bi-bookmark"}`}></i>
-                                    </button>
-                                    <button className='btn btn-light shadow-none' onClick={(e) => downloadImage(e, image.url, image.resolution)}>
-                                        <i className='bi bi-arrow-down'></i>
-                                    </button>
+                                    {
+                                        image.onlyPremium && Cookies.get("isPremium") ? (
+                                            <>
+                                                <button
+                                                    className='btn btn-light shadow-none me-1'
+                                                    onClick={(e) => savedImages.includes(image._id) ? unsaveImage(e, image._id) : saveImage(e, image._id)}
+                                                >
+                                                    <i className={`bi ${savedImages.includes(image._id) ? "bi-bookmark-fill" : "bi-bookmark"}`}></i>
+                                                </button>
+                                                <button className='btn btn-light shadow-none' onClick={(e) => downloadImage(e, image.url, image.resolution)}>
+                                                    <i className='bi bi-arrow-down'></i>
+                                                </button>
+                                            </>
+                                        ) :
+                                            image.onlyPremium && !Cookies.get("isPremium") ? (
+                                                <>
+                                                    <button
+                                                        className='btn btn-light shadow-none me-1'
+                                                        onClick={() => navigate("/premium")}
+                                                    >
+                                                        <i className={`bi bi-bookmark`}></i>
+                                                    </button>
+                                                    <button className='btn btn-light shadow-none' onClick={() => navigate("/premium")}>
+                                                        <i class="bi bi-lock-fill"></i>
+                                                    </button>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <button
+                                                        className='btn btn-light shadow-none me-1'
+                                                        onClick={(e) => savedImages.includes(image._id) ? unsaveImage(e, image._id) : saveImage(e, image._id)}
+                                                    >
+                                                        <i className={`bi ${savedImages.includes(image._id) ? "bi-bookmark-fill" : "bi-bookmark"}`}></i>
+                                                    </button>
+                                                    <button className='btn btn-light shadow-none' onClick={(e) => downloadImage(e, image.url, image.resolution)}>
+                                                        <i className='bi bi-arrow-down'></i>
+                                                    </button>
+                                                </>
+                                            )
+                                    }
                                 </div>
                                 <div className="show-username show-username-position">
                                     <h5 className="text-light fs-4">{image.user.username}</h5>
@@ -326,7 +359,7 @@ const ShowImages = ({ fetchUserImages, limit, images, page = "", getSavedImages 
                     </div>
                 </div>
             )}
-            <ImageModal rating={ratings} imageId={imageId} downloadImage={downloadImage} src={source} toggle={toggle} modal={modal} imageSize={imgSize} closeModal={handleClose} />
+            <ImageModal rating={ratings} imageId={imageId} downloadImage={downloadImage} src={source} toggle={toggle} modal={modal} imageSize={imgSize} closeModal={handleClose} onlyPremium={onlyForPremium} />
             <Modal isOpen={isOpen} toggle={toggleModal} size='lg'>
                 <ModalHeader>Update Image</ModalHeader>
                 <ModalBody>

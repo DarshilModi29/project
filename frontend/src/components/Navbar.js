@@ -110,7 +110,12 @@ const Navbar = () => {
               {Cookies.get("jwt") && Cookies.get("role") === "user"
                 ?
                 <>
-                  <Link to="/premium" className='me-4 premium'>Infinite+</Link>
+                  <li className="nav-item list-unstyled">
+                    <Link to="/premium" className='nav-link p-2'>Infinite+</Link>
+                  </li>
+                  <li className="nav-item list-unstyled">
+                    <Link to="/infinite-pro" className='p-2 me-2 nav-link'>Infinite Pro</Link>
+                  </li>
                   <Button type='button' onClick={toggleModal} className='me-2 border border-white shadow-none text-white' color='white'>Upload an Image</Button>
                   <Dropdown isOpen={dropdownOpen} toggle={toggle}>
                     <DropdownToggle color='transperant' className='shadow-none'>

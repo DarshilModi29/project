@@ -50,6 +50,9 @@ router.post("/api/uploadImage", Auth, upload.single("images"), async (req, res) 
                 imageSize: (req.file.size / (1024 * 1024)).toFixed(2),
                 resolution: `${width}x${height}`
             });
+            if (imageUploader.isPremium) {
+                image["onlyPremium"] = true;
+            }
             await image.save();
             res.json({ message: "Image has been Uploaded" });
         }
