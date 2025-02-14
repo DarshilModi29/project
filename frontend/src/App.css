@@ -7,15 +7,15 @@
 /* Basic */
 
 body {
-  background-color: #ebeae9;
-}
-
-html {
-  font-family: "Open Sans", sans-serif;
+  background-color: #ebeae9 !important;
 }
 
 .text-gray {
   color: #666;
+}
+
+.text-justify {
+  text-align: justify;
 }
 
 .remove-arrows::-webkit-outer-spin-button,
@@ -47,10 +47,10 @@ h1 {
 }
 
 h2 {
-  line-height: 110%;
-  font-size: 2.2rem;
-  text-transform: uppercase;
-  font-weight: 700;
+  line-height: 110% !important;
+  font-size: 2.2rem !important;
+  text-transform: uppercase !important;
+  font-weight: 700 !important;
 }
 
 .min-100 {
@@ -312,6 +312,7 @@ h2 {
 .nav-pills .nav-link {
   padding-left: 0px;
   padding-right: 0px;
+  color: black;
 }
 
 .nav-pills .nav-link.active {
@@ -326,6 +327,7 @@ h2 {
   color: black;
   border-radius: 100px;
   background-color: transparent;
+  cursor: pointer;
 }
 
 @media (max-width: 399px) {

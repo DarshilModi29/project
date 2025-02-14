@@ -48,7 +48,7 @@ function Home() {
       <div className="container-fluid pb-5 portfolio-text">
         <div className="row">
           <div className="col-md-7 offset-md-1 col-sm-12">
-            <h2>Donec rutrum congue leo eget malesuada lacinia eget consectetur.</h2>
+            <h2>Infinite Gallery</h2>
           </div>
         </div>
         <div className="row">

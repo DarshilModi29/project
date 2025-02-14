@@ -181,7 +181,7 @@ const Contest = () => {
                                         <NavLink active={activeNav === "1"} onClick={() => {
                                             setActiveNav("1");
                                             setContests([]);
-                                        }} href="#">
+                                        }}>
                                             Live Contests
                                         </NavLink>
                                     </NavItem>
@@ -189,7 +189,7 @@ const Contest = () => {
                                         <NavLink active={activeNav === "2"} onClick={() => {
                                             setActiveNav("2");
                                             setContests([]);
-                                        }} href="#">
+                                        }}>
                                             Finished Contests
                                         </NavLink>
                                     </NavItem>
