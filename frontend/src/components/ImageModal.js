@@ -99,7 +99,7 @@ const ImageModal = ({ imageId, rating, src, modal, toggle, imageSize, closeModal
                 <ModalFooter className='border-bottom'>
                     <div>
                         {
-                            onlyPremium ? (
+                            onlyPremium && !Cookies.get("isPremium") ? (
                                 <Button color="white" className='border-dark' onClick={() => navigate("/premium")}>
                                     <i className='bi bi-lock-fill'></i>
                                 </Button>
