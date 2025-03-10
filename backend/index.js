@@ -16,6 +16,7 @@ const dashboardRouter = require("./src/routers/admin/dashboard");
 const contestRouter = require("./src/routers/contest");
 const paymentRouter = require("./src/routers/payment");
 const infiniteProRouter = require("./src/routers/infinitePro");
+const earningsRouter = require("./src/routers/earnings");
 
 const app = express();
 const port = process.env.PORT || 8000
@@ -37,6 +38,7 @@ app.use(dashboardRouter);
 app.use(contestRouter);
 app.use(paymentRouter);
 app.use(infiniteProRouter);
+app.use(earningsRouter);
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);

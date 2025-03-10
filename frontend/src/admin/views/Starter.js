@@ -1,4 +1,4 @@
-import { Col, Row } from "reactstrap";
+import { Col, Row, Card, CardBody, CardTitle, CardSubtitle } from "reactstrap";
 import SalesChart from "../components/dashboard/SalesChart";
 import TopCards from "../components/dashboard/TopCards";
 import { useCallback, useEffect, useState } from "react";
@@ -90,9 +90,21 @@ const Starter = () => {
       {/* <Col sm="12" lg="12" xl="7" xxl="8"> */}
       <SalesChart />
       {/***Today Uploaded Image Table***/}
-      <ImageTable getImages={getTodayImages} title={"Images"} subtitle={"Images Uploaded Today"} headings={headings} images={images} config={config}>
-        <PaginationData total={totalImages} setActivePage={setActivePage} activePage={activePage} />
-      </ImageTable>
+      <Row>
+        <Col lg="12">
+          <Card className='scrollable'>
+            <CardBody>
+              <CardTitle tag="h5">Images</CardTitle>
+              <CardSubtitle className="mb-2 text-muted" tag="h6">
+                Premium and Normal Images Uploaded today
+              </CardSubtitle>
+              <ImageTable getImages={getTodayImages} title={"Images"} subtitle={"Images Uploaded Today"} headings={headings} images={images} config={config}>
+                <PaginationData total={totalImages} setActivePage={setActivePage} activePage={activePage} />
+              </ImageTable>
+            </CardBody>
+          </Card>
+        </Col>
+      </Row >
     </>
   );
 };

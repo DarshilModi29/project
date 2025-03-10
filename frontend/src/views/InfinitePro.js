@@ -174,7 +174,9 @@ const InfinitePro = () => {
                         <Input type='checkbox' onChange={(e) => {
                             setIsAccepted(e.target.checked);
                             setTermsError("");
-                        }} checked={isAccepted} /> Accept our <button className="text-primary text-decoration-underline p-0 border-0" style={{ backgroundColor: 'transparent' }} onClick={toggleModal}>Terms & conditions</button>
+                        }} checked={isAccepted} /> Accept our {" "}
+                        <span role='button' className='text-decoration-underline text-primary'
+                            onClick={toggleModal}>Terms & conditions</span>
                         {termsError ? (<p className="text-danger">{termsError}</p>) : null}
                     </FormGroup>
                     <Button type='submit' color='primary'>Submit</Button>

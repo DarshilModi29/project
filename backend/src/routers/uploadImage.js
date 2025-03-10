@@ -11,6 +11,7 @@ const savedImageModel = require("../models/saveImageSchema");
 const downloadModel = require("../models/downloadSchema");
 const ratingModel = require("../models/ratingsSchema");
 const tagsSchema = require("../models/tagsSchema");
+const Photographer = require("../models/infiniteProSchema");
 var oldTags;
 
 // Uploads images
@@ -50,8 +51,10 @@ router.post("/api/uploadImage", Auth, upload.single("images"), async (req, res) 
                 imageSize: (req.file.size / (1024 * 1024)).toFixed(2),
                 resolution: `${width}x${height}`
             });
-            if (imageUploader.isPremium) {
-                image["onlyPremium"] = true;
+            const isPremiumPhotographer = await Photographer.findOne({ user: imageUploader._id, status: "accepted" });
+            if (isPremiumPhotographer) {
+                image.onlyPremium = true;
+                image.earnings = 0;
             }
             await image.save();
             res.json({ message: "Image has been Uploaded" });
@@ -87,13 +90,14 @@ router.get("/api/image/:id", Auth, async (req, res) => {
 });
 
 // fetches all images
+//images on admin panel
 router.get("/api/allImages", Auth, async (req, res) => {
     try {
         const page = parseInt(req.query.page);
         const limit = parseInt(req.query.limit);
         const skip = (page - 1) * limit;
 
-        const images = await imageSchema.find({})
+        const images = await imageSchema.find({ onlyPremium: false })
             .populate({ path: "user", select: '_id username' })
             .sort({ "_id": -1 })
             .skip(skip)
@@ -111,6 +115,31 @@ router.get("/api/allImages", Auth, async (req, res) => {
     }
 });
 
+router.get("/api/premiumImages", Auth, async (req, res) => {
+    try {
+        const page = parseInt(req.query.page);
+        const limit = parseInt(req.query.limit);
+        const skip = (page - 1) * limit;
+
+        const images = await imageSchema.find({ onlyPremium: true })
+            .populate({ path: "user", select: '_id username' })
+            .sort({ "_id": -1 })
+            .skip(skip)
+            .limit(limit);
+        const totalImages = await imageSchema.countDocuments();
+
+        if (images.length > 0) {
+            res.json({ data: images, totalImages });
+        } else {
+            res.json({ message: "No Images Found" });
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+})
+
+// images on user panel
 router.get("/api/images", async (req, res) => {
     try {
         const offset = parseInt(req.query.offset);

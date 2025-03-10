@@ -37,6 +37,10 @@ const imageSchema = new mongoose.Schema({
     onlyPremium: {
         type: Boolean,
         default: false
+    },
+    earnings: {
+        type: Number,
+        default: 0
     }
 }, { timestamps: true });
 

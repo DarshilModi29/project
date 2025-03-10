@@ -1,8 +1,10 @@
 const Auth = require("../middleware/Auth");
 const router = require("express").Router();
 const { upload } = require("../middleware/Multer");
-const { uploadImage, isAdmin } = require("../utilityFunctions/uploadImage");
+const { uploadImage, isAdmin, chunkArray } = require("../utilityFunctions/uploadImage");
 const infiniteProSchema = require("../models/infiniteProSchema");
+const earningSchema = require("../models/earningSchema");
+const cron = require('node-cron');
 
 router.post("/api/application-form", Auth, upload.single("file"), async (req, res) => {
     try {
@@ -130,5 +132,22 @@ router.patch("/api/reject-application/:id", Auth, async (req, res) => {
         res.status(500).json({ message: "Internal Server Error" });
     }
 });
+
+cron.schedule("0 0 1 * *", async () => {
+    try {
+        const data = await infiniteProSchema.find({ status: "accepted" });
+        const dataInsertSize = 20;
+        const month = new Date().toISOString().slice(0, 7);
+        const chunks = chunkArray(data, dataInsertSize).flat();
+        for (let i = 0; i < chunks.length; i++) {
+            const chunk = chunks[i];
+            await earningSchema.insertMany({ user_id: chunk.user, month });
+            console.log(`✅ Chunk ${i + 1} inserted successfully!`);
+        }
+        console.log("Data inserted successfully")
+    } catch (error) {
+        console.log(error);
+    }
+})
 
 module.exports = router;

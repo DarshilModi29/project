@@ -8,6 +8,11 @@ const cron = require("node-cron");
 
 router.post("/api/subscribe", Auth, async (req, res) => {
     try {
+        const { _id } = req.user;
+        const isPremiumUser = await premiumSchema.findOne({ user: _id, status: 'active' });
+        if (isPremiumUser) {
+            return res.status(401).json({ message: "You are already a premium user" });
+        }
         const razorpay = new rzp({
             key_id: process.env.RAZORPAY_KEY_ID,
             key_secret: process.env.RAZORPAY_SECRET
@@ -49,7 +54,6 @@ router.post("/api/subscribe/validate", Auth, async (req, res) => {
                 key_secret: process.env.RAZORPAY_SECRET
             });
             var payDetails = await instance.payments.fetch(razorpay_payment_id);
-            console.log(payDetails);
 
             const todayDate = new Date();
             todayDate.setUTCHours(0, 0, 0, 0);

@@ -22,44 +22,48 @@ const Premium = () => {
             })
         });
         const order = await response.json();
-        const key_id = process.env.REACT_APP_RAZORPAY_KEY_ID
-        var options = {
-            "key": key_id.replaceAll('"', ''),
-            "amount": price * 100,
-            "currency": "INR",
-            "name": "Infinite Gallery",
-            "description": "Test Transaction",
-            "image": `${config.SERVER_URL}/images/other/logo.png`,
-            "order_id": order.id,
-            "handler": async function (response) {
-                const validateRes = await fetch(`${config.SERVER_URL}/api/subscribe/validate`, {
-                    method: "POST",
-                    body: JSON.stringify({
-                        ...response, amount: price
-                    }),
-                    headers: {
-                        "Authorization": `bearer ${Cookies.get("jwt")}`,
-                        'Content-Type': 'application/json'
+        if (response.ok) {
+            const key_id = process.env.REACT_APP_RAZORPAY_KEY_ID
+            var options = {
+                "key": key_id.replaceAll('"', ''),
+                "amount": price * 100,
+                "currency": "INR",
+                "name": "Infinite Gallery",
+                "description": "Test Transaction",
+                "image": `${config.SERVER_URL}/images/other/logo.png`,
+                "order_id": order.id,
+                "handler": async function (response) {
+                    const validateRes = await fetch(`${config.SERVER_URL}/api/subscribe/validate`, {
+                        method: "POST",
+                        body: JSON.stringify({
+                            ...response, amount: price
+                        }),
+                        headers: {
+                            "Authorization": `bearer ${Cookies.get("jwt")}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    const validateJson = await validateRes.json();
+                    if (validateRes.ok) {
+                        alert(validateJson.message);
+                        Cookies.set("isPremium", "true");
+                    } else {
+                        alert(validateJson.message);
                     }
-                });
-                const validateJson = await validateRes.json();
-                if (validateRes.ok) {
-                    alert(validateJson.message);
-                    Cookies.set("isPremium", "true");
-                } else {
-                    alert(validateJson.message);
+                },
+                "theme": {
+                    "color": "#3399cc"
                 }
-            },
-            "theme": {
-                "color": "#3399cc"
-            }
-        };
-        var rzp1 = new window.Razorpay(options);
-        rzp1.on('payment.failed', function (response) {
-            alert(response.error.description);
-        });
-        rzp1.open();
-        e.preventDefault();
+            };
+            var rzp1 = new window.Razorpay(options);
+            rzp1.on('payment.failed', function (response) {
+                alert(response.error.description);
+            });
+            rzp1.open();
+            e.preventDefault();
+        } else {
+            alert(order.message);
+        }
     }
 
     return (

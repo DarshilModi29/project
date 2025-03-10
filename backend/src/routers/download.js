@@ -5,6 +5,7 @@ const imageSchema = require("../models/imageSchema");
 const sharp = require("sharp");
 const path = require("path");
 const fs = require("fs");
+const earningSchema = require("../models/earningSchema");
 
 // downloads image and insert record in donload schema and update download count of image
 router.post("/api/downloadImage", Auth, async (req, res) => {
@@ -53,6 +54,43 @@ router.post("/api/downloadImage", Auth, async (req, res) => {
                 .resize(width, height)
                 .composite([{ input: finalWatermark, gravity: 'northeast' }])
                 .toBuffer();
+        }
+
+        // checks unique downloads for image, add ₹100 for first 5 unique downloads and add amount of ₹5 for every 5 unique downloads
+        const createdAtDate = new Date(`${image_id.createdAt}`);
+        const now = new Date();
+        const month = now.toISOString().slice(0, 7);
+        const isSameMonthAndYear =
+            createdAtDate.getMonth() === now.getMonth() &&
+            createdAtDate.getFullYear() === now.getFullYear();
+        if (image_id.onlyPremium && isSameMonthAndYear) {
+            console.log("Hello");
+            const uniqueDownloads = await downloadSchema.aggregate([
+                {
+                    $match: {
+                        image_id: image_id._id,
+                    }
+                },
+                {
+                    $group: {
+                        _id: "$user_id",
+                    }
+                },
+                {
+                    $count: "uniqueCount"
+                }
+            ]);
+            const neededDownloads = parseInt(process.env.DOWNLOADS);
+            if (uniqueDownloads.length % neededDownloads === 0) {
+                if (uniqueDownloads.length >= neededDownloads && image_id.earnings == 0) {
+                    await imageSchema.findByIdAndUpdate(image_id._id, { $set: { earnings: 100 } });
+                    await earningSchema.updateOne({ user_id: image_id.user, month }, { $inc: { amount: 100 } });
+                }
+                else if (image_id.earnings >= 100 && image_id.earnings < 300) {
+                    await imageSchema.findByIdAndUpdate(image_id._id, { $inc: { earnings: 5 } });
+                    await earningSchema.updateOne({ user_id: image_id.user, month }, { $inc: { amount: 5 } });
+                }
+            }
         }
 
         await Promise.all([
@@ -125,6 +163,6 @@ router.get("/api/userDownload", Auth, async (req, res) => {
         console.log(error);
         res.status(500).json({ message: "Internal Server Error" });
     }
-})
+});
 
 module.exports = router;
