@@ -42,6 +42,11 @@ const navigation = [
     href: "/infinite-pro",
     icon: "bi bi-star-fill"
   },
+  {
+    title: "Pricing Model",
+    href: "/pricing-model",
+    icon: "bi bi-currency-rupee"
+  },
 ];
 
 const Sidebar = () => {

@@ -1,10 +1,31 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button, Col, Row } from 'reactstrap';
 import config from '../admin/components/Config';
 import Cookies from "js-cookie";
 
 const Premium = () => {
-    const getPremium = async (e, price) => {
+    const [pricingModel, setPricingModel] = useState([]);
+    const getPricingModels = useCallback(async () => {
+        try {
+            const response = await fetch(`${config.SERVER_URL}/api/show-premium-pricing`, {
+                method: 'GET',
+                headers: {
+                    "Authorization": `bearer ${Cookies.get("jwt")}`
+                }
+            });
+            const data = await response.json();
+            if (response.ok) {
+                setPricingModel(data.data);
+            } else {
+                alert(data.message);
+            }
+        } catch (error) {
+            console.log(error);
+            alert(error.toString());
+        }
+    }, []);
+
+    const getPremium = async (e, price, month) => {
         if (Cookies.get("isPremium")) {
             alert("You are already a premium user");
             return;
@@ -36,7 +57,7 @@ const Premium = () => {
                     const validateRes = await fetch(`${config.SERVER_URL}/api/subscribe/validate`, {
                         method: "POST",
                         body: JSON.stringify({
-                            ...response, amount: price
+                            ...response, amount: price, duration_month: month
                         }),
                         headers: {
                             "Authorization": `bearer ${Cookies.get("jwt")}`,
@@ -66,6 +87,10 @@ const Premium = () => {
         }
     }
 
+    useEffect(() => {
+        getPricingModels();
+    }, [getPricingModels])
+
     return (
         <>
             <div className='d-flex flex-column align-items-center justify-content-center container'>
@@ -78,14 +103,16 @@ const Premium = () => {
                         <li>✅ Join premium user exclusive contests</li>
                     </ul>
                     <Row className='w-100 mt-3'>
-                        <Col md={6} className='mb-md-0 mb-3'>
-                            <h5 className="text-center">₹159/1 MONTH</h5>
-                            <Button color='dark' block={true} className='shadow-none mt-3 rounded-5' onClick={(e) => getPremium(e, 159)}>Get Infinite+</Button>
-                        </Col>
-                        <Col md={6}>
-                            <h5 className="text-center">₹399/3 MONTH</h5>
-                            <Button color='dark' block={true} className='shadow-none mt-3 rounded-5' onClick={(e) => getPremium(e, 399)}>Get Infinite+</Button>
-                        </Col>
+                        {
+                            pricingModel?.map((pm, index) => {
+                                return (
+                                    <Col md className='mb-md-0 mb-3' key={index}>
+                                        <h5 className="text-center">₹{pm.amount}/{pm.duration_month} MONTH</h5>
+                                        <Button color='dark' block={true} className='shadow-none mt-3 rounded-5' onClick={(e) => getPremium(e, pm.amount, pm.duration_month)}>Get Infinite+</Button>
+                                    </Col>
+                                )
+                            })
+                        }
                     </Row>
                 </div>
             </div>

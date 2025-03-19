@@ -41,7 +41,8 @@ router.post("/api/subscribe/validate", Auth, async (req, res) => {
             razorpay_payment_id,
             razorpay_order_id,
             razorpay_signature,
-            amount
+            amount,
+            duration_month
         } = req.body;
         const sha = crypto.createHmac("sha256", process.env.RAZORPAY_SECRET);
         sha.update(`${razorpay_order_id}|${razorpay_payment_id}`);
@@ -57,7 +58,7 @@ router.post("/api/subscribe/validate", Auth, async (req, res) => {
 
             const todayDate = new Date();
             todayDate.setUTCHours(0, 0, 0, 0);
-            const premiumDays = parseInt(amount) === 159 ? 30 : 90;
+            const premiumDays = parseInt(duration_month) * 30;
             const expiredDate = new Date(todayDate);
             expiredDate.setUTCDate(expiredDate.getUTCDate() + premiumDays);
 

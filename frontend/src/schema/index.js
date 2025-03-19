@@ -56,6 +56,13 @@ export const infinteProSchema = Yup.object({
     city: Yup.string().required("Please select your city"),
 });
 
+export const pricingSchema = Yup.object({
+    amount: Yup.number()
+        .required("Please enter amount for premium").min(100, "Minimum 100 rs.").max(10000, "Maximum 10000 rs.").integer("Amount must be a whole number"),
+    month: Yup.number()
+        .required("Please enter the duration in month").min(1, "Invalid Month number").max(12, "Invalid Month Number")
+});
+
 export const extensionFilter = (file) => {
     if (!file) return false;
 
