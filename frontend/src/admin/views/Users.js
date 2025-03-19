@@ -4,7 +4,7 @@ import config from '../components/Config';
 import PaginationData from '../components/Pagination';
 import Cookies from 'js-cookie';
 
-const headings = ["", "Profile Pic", "Username", "Email", "Status", "Actions"];
+const headings = ["", "Profile Pic", "Username", "Email", "Status", "Premium User", "Actions"];
 const limit = 10;
 
 const Users = () => {
@@ -133,6 +133,11 @@ const Users = () => {
                         <td>{user.username}</td>
                         <td>{user.email}</td>
                         <td>{user.isActive ? (
+                          <span className="p-2 bg-success rounded-circle d-inline-block ms-3"></span>
+                        ) : (
+                          <span className="p-2 bg-danger rounded-circle d-inline-block ms-3"></span>
+                        )}</td>
+                        <td>{user.isPremium ? (
                           <span className="p-2 bg-success rounded-circle d-inline-block ms-3"></span>
                         ) : (
                           <span className="p-2 bg-danger rounded-circle d-inline-block ms-3"></span>

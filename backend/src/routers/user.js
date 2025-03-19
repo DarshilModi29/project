@@ -5,6 +5,7 @@ const { upload } = require("../middleware/Multer");
 const jwt = require("jsonwebtoken");
 const { uploadImage, verifyEmail, generateToken } = require("../utilityFunctions/uploadImage");
 const Auth = require("../middleware/Auth");
+const cron = require("node-cron");
 
 router.post("/auth/registration", upload.single('profilePic'), async (req, res) => {
     try {
@@ -140,6 +141,23 @@ router.get("/api/userDetails", Auth, async (req, res) => {
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: 'Error verifying email' });
+    }
+})
+
+cron.schedule("0 * * * * *", async () => {
+    try {
+        const users = await User.find({ isSuspend: true });
+        users.forEach(element => {
+            if (new Date() >= new Date(element.suspendEndDate)) {
+                element.isSuspend = false;
+                element.suspendEndDate = null;
+                element.save();
+            } else {
+                console.log("No users are unsuspended");
+            }
+        });
+    } catch (error) {
+        console.log(error);
     }
 })
 

@@ -166,6 +166,7 @@ router.get("/api/check-participant", Auth, async (req, res) => {
                 $project: {
                     _id: 0,
                     contest: "$contest._id",
+                    image: "$image"
                 }
             }
         ]);
@@ -268,7 +269,7 @@ router.get("/api/participants/:id", async (req, res) => {
     }
 });
 
-cron.schedule("0 0 * * * *", async () => {
+cron.schedule("0 * * * * *", async () => {
     try {
         const todayDate = new Date();
         const currentDate = new Date(todayDate.setUTCHours(0, 0, 0, 0));
@@ -287,7 +288,7 @@ cron.schedule("0 0 * * * *", async () => {
     }
 });
 
-cron.schedule("0 0 * * * *", async () => {
+cron.schedule("0 * * * * *", async () => {
     try {
         const todayDate = new Date();
         const currentDate = new Date(todayDate.setUTCHours(0, 0, 0, 0));

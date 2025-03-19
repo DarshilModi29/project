@@ -12,7 +12,7 @@ import { date } from 'yup';
 const initVal = {
     title: "",
     description: "",
-    start_date: "",
+    start_date: new Date().toISOString().split('T')[0],
     end_date: "",
     contest_size: null,
     rules: "",
@@ -319,7 +319,15 @@ const Contest = () => {
                         </FormGroup>
                         <FormGroup>
                             <Label for="end_date">End Date</Label>
-                            <Input min={values.start_date} name="end_date" className='shadow-none' id="end_date" type='date' onChange={handleChange} onBlur={handleBlur} value={values.end_date} />
+                            <Input
+                                min={
+                                    values.start_date
+                                        ? new Date(new Date(values.start_date).setDate(new Date(values.start_date).getDate() + 1))
+                                            .toISOString()
+                                            .split('T')[0]
+                                        : ""
+                                }
+                                name="end_date" className='shadow-none' id="end_date" type='date' onChange={handleChange} onBlur={handleBlur} value={values.end_date} />
                             {
                                 errors.end_date && touched.end_date ? (
                                     <p className='text-danger'>{errors.end_date}</p>

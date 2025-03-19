@@ -10,6 +10,7 @@ const Contest = () => {
     const navigate = useNavigate();
     const [contests, setContests] = useState([]);
     const [participant, setParticipant] = useState([]);
+    const [isUploaded, setIsUploaded] = useState([]);
     const [images, setImages] = useState([]);
     const [isOpen, setIsOpen] = useState(false);
     const [contestId, setContestId] = useState("");
@@ -25,7 +26,9 @@ const Contest = () => {
         if (images.length === 0) {
             setError("Please select an image");
         } else if (!extensionFilter(images[0])) {
-            setError("Invalid file type");
+            setError("Invalid image type");
+        } else if (images[0].size / (1024 * 1024) > 4) {
+            setError("Image size exceeds 4MB");
         } else {
             if (window.confirm("Are you sure you want to upload this image? You can't change this image after uplaoding it.")) {
                 const formData = new FormData();
@@ -43,6 +46,7 @@ const Contest = () => {
                         alert(data.success);
                         toggleModal();
                         setContestId("");
+                        checkParticipant();
                     }
                 } else if (data.error) {
                     setError(data.error);
@@ -106,7 +110,9 @@ const Contest = () => {
             const data = await response.json();
             if (response.ok) {
                 const contests = data.data?.map((contest) => contest.contest);
+                const uploadedImage = data.data?.map((contest) => contest.image);
                 setParticipant(contests);
+                setIsUploaded(uploadedImage);
             }
         } catch (error) {
             console.log(error);
@@ -167,11 +173,15 @@ const Contest = () => {
                                     {
                                         con.status === "Started" ?
                                             participant.includes(con._id) ?
-                                                <Button color='warning' className='shadow-none' onClick={() => {
-                                                    setIsOpen(true);
-                                                    setImages([]);
-                                                    setContestId(con._id);
-                                                }}>Upload Image</Button> : <Button disabled={con.forPremiumUsers && !Cookies.get("isPremium")} color='success' onClick={() => joinContest(con._id)}>{con.forPremiumUsers && !Cookies.get("isPremium") ?
+                                                <Button color='warning'
+                                                    disabled={isUploaded.length > 0 && isUploaded[0] ? true : false}
+                                                    className='shadow-none' onClick={() => {
+                                                        setIsOpen(true);
+                                                        setImages([]);
+                                                        setContestId(con._id);
+                                                    }}>Upload Image
+                                                </Button> :
+                                                <Button disabled={con.forPremiumUsers && !Cookies.get("isPremium")} color='success' onClick={() => joinContest(con._id)}>{con.forPremiumUsers && !Cookies.get("isPremium") ?
                                                     (
                                                         <>
                                                             <i className='bi bi-lock'></i> Join
