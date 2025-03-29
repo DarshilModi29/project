@@ -2,6 +2,23 @@ const router = require("express").Router();
 const cron = require("node-cron");
 const Earnings = require("../models/earningSchema");
 const Photographers = require("../models/infiniteProSchema");
+const Auth = require("../middleware/Auth");
+
+router.get("/api/show-earnings", Auth, async (req, res) => {
+    try {
+        const user_id = req.user._id;
+        const pro_photographer = await Photographers.findOne({ user: user_id, status: "accepted" });
+        if (pro_photographer) {
+            const earnings = await Earnings.find({ user_id: user_id, status: "paid" });
+            res.json({ data: earnings });
+        } else {
+            res.json({ data: [] });
+        }
+    } catch (error) {
+        res.status(500).json({ "message": "Internal Server Error" });
+        console.log(error);
+    }
+})
 
 cron.schedule("0 0 4 * *", async () => {
     try {

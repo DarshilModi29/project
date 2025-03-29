@@ -30,9 +30,17 @@ const ContestDetails = () => {
     return (
         <div className="container">
             <div className="back-button mb-2">
-                <i role="button" className='bi bi-arrow-left fs-3' onClick={() => {
-                    navigate("/contest");
-                }}></i>
+                <i
+                    role="button"
+                    className='bi bi-arrow-left fs-3'
+                    onClick={() => {
+                        if (window.history.state && window.history.state.idx > 0) {
+                            navigate(-1);
+                        } else {
+                            navigate("/contest");
+                        }
+                    }}
+                ></i>
             </div>
             {contestData ? (
                 <>

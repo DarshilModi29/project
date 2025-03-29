@@ -45,7 +45,7 @@ export const contestSchema = Yup.object({
         }),
     rules: Yup.string().trim().required("Need rules & guidelines for contest"),
     contest_size: Yup.number().nullable().min(0, "Negative numbers are not allowed"),
-    prize_money: Yup.number().nullable().min(0, "Negative numbers are not allowed"),
+    prize_money: Yup.number().nullable().min(0, "Negative numbers are not allowed").max(100000, "Prize pool should be maximum 1,00,000 rs."),
 });
 
 export const infinteProSchema = Yup.object({

@@ -20,6 +20,8 @@ const ContestDetail = lazy(() => import("../views/ContestDetails"));
 const Contest = lazy(() => import("../views/Contest"));
 const Premium = lazy(() => import("../views/Premium"));
 const InfinitePro = lazy(() => import("../views/InfinitePro"));
+const UserContest = lazy(() => import("../views/UserProfile/Contest"));
+const Earnings = lazy(() => import("../views/UserProfile/Earnings"));
 
 const UserRoutes = [
     {
@@ -47,6 +49,8 @@ const UserRoutes = [
                     { path: "inquiry", element: <UserInquiry /> },
                     { path: "saved-images", element: <SavedImages /> },
                     { path: "downloads", element: <Downloads /> },
+                    { path: "contest", element: <UserContest /> },
+                    { path: "earnings", element: <Earnings /> },
                 ]
             },
             { path: "*", element: <Navigate to="/home" /> }, // Handle unknown routes

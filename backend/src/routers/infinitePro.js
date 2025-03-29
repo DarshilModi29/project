@@ -133,6 +133,21 @@ router.patch("/api/reject-application/:id", Auth, async (req, res) => {
     }
 });
 
+router.get("/api/isInfinitePro", Auth, async (req, res) => {
+    try {
+        const user_id = req.user._id;
+        const isProPhotographer = await infiniteProSchema.findOne({ user: user_id, status: "accepted" });
+        if (isProPhotographer) {
+            res.json({ data: true });
+        } else {
+            res.json({ data: false });
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+})
+
 cron.schedule("0 0 1 * *", async () => {
     try {
         const data = await infiniteProSchema.find({ status: "accepted" });

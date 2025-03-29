@@ -13,8 +13,12 @@ const Participants = ({ contestId, isEnded }) => {
             const response = await fetch(`${config.SERVER_URL}/api/vote/${id}`, {
                 method: 'POST',
                 headers: {
+                    'Content-Type': "application/json",
                     'Authorization': `bearer ${Cookies.get("jwt")}`
-                }
+                },
+                body: JSON.stringify({
+                    contestId: contestId
+                })
             });
             const data = await response.json();
             if (response.ok) {

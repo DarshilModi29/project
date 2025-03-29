@@ -110,7 +110,11 @@ router.post("/api/join-contest/:id", Auth, async (req, res) => {
     try {
         const userId = req.user._id;
         const { id } = req.params;
+        const isParticipant = await participantSchema.findOne({ contest: id, user: userId });
         const { forPremiumUsers } = await contestSchema.findById(id, { forPremiumUsers: 1 });
+        if (isParticipant) {
+            return res.status(400).json({ status: "joined", message: "You are laready a participant" });
+        }
         if (forPremiumUsers) {
             const isPremiumUser = await premiumSchema.findOne({ user: userId, status: "active" });
             if (isPremiumUser) {
@@ -238,10 +242,12 @@ router.get("/api/isVoted/:id", Auth, async (req, res) => {
 router.post("/api/vote/:id", Auth, async (req, res) => {
     try {
         const { id } = req.params;
-        const isVoted = await votesSchema.findOne({ vote_to: id, vote_by: req.user._id });
+        const { contestId } = req.body;
+        const isVoted = await votesSchema.findOne({ contest: contestId, vote_to: id, vote_by: req.user._id });
         if (!isVoted) {
             const updatedParticipant = await participantSchema.findByIdAndUpdate(id, { $inc: { votes: 1 } });
             const votes = new votesSchema({
+                contest: contestId,
                 vote_to: id,
                 vote_by: req.user._id
             });
@@ -288,6 +294,26 @@ cron.schedule("0 * * * * *", async () => {
     }
 });
 
+router.get("/api/user-contests", Auth, async (req, res) => {
+    try {
+        const user_id = req.user._id;
+        const contests = await participantSchema.find({ user: user_id }, { contest: 1, _id: 0 });
+
+        const user_contests = (await Promise.all(
+            contests.map(async (contest) => {
+                const contest_id = contest.contest;
+                // Use findOne instead of find to get a single document
+                return await contestSchema.findOne({ _id: contest_id, status: "Ended" }).populate("winner");
+            })
+        )).filter(contest => contest !== null); // Filter out null results
+
+        res.json({ data: user_contests });
+    } catch (error) {
+        console.log("Error in fetching user contests:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+
 cron.schedule("0 * * * * *", async () => {
     try {
         const todayDate = new Date();
@@ -303,17 +329,39 @@ cron.schedule("0 * * * * *", async () => {
         }
 
         const contestId = contestToEnd._id;
+        const participants = await participantSchema.find({ contest: contestId }).sort({ votes: -1 });
+        if (!participants.length) {
+            console.log("No participants in the contest.");
+            return;
+        }
 
-        const mostVoted = await participantSchema.findOne({
-            contest: contestId
-        }).sort({ votes: -1 }).limit(1);
+        const topVoteCount = participants[0].votes;
+        const topParticipants = participants.filter(p => p.votes === topVoteCount);
+        var contestWinner;
 
-        const winner = mostVoted ? mostVoted.user : null;
+        if (topVoteCount == 0) {
+            contestWinner = null;
+        }
+        else if (topParticipants.length == 1) {
+            contestWinner = topParticipants[0].user;
+        } else {
+            var last_votes = await Promise.all(
+                topParticipants.map(async (participant) => {
+                    const votes = await votesSchema.find({ contest: contestId, vote_to: participant._id }).sort({ _id: -1 });
+                    return votes[0] || null;
+                })
+            );
+            last_votes.sort((a, b) => a.vote_time - b.vote_time);
+            const winner = topParticipants.find((participant) =>
+                participant._id.equals(last_votes[0].vote_to)
+            );
 
+            contestWinner = winner ? winner.user : null;
+        }
         const result = await contestSchema.updateOne({
             _id: contestId
         }, {
-            $set: { status: "Ended", winner }
+            $set: { status: "Ended", winner: contestWinner }
         });
         console.log(`${result.modifiedCount} contest(s) have been ended.`);
     } catch (error) {
