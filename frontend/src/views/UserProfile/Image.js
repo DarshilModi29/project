@@ -20,10 +20,10 @@ const Image = () => {
             if (response.ok) {
                 setImages(data.data);
             } else {
-                alert(data.message);
+                config.alerts.error(data.message);
             }
         } catch (error) {
-            alert(error.toString());
+            config.alerts.error(error.toString());
             console.log(error);
         }
     }, []);

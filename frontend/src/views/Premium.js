@@ -17,17 +17,17 @@ const Premium = () => {
             if (response.ok) {
                 setPricingModel(data.data);
             } else {
-                alert(data.message);
+                config.alerts.error(data.message);
             }
         } catch (error) {
             console.log(error);
-            alert(error.toString());
+            config.alerts.error(error.toString());
         }
     }, []);
 
     const getPremium = async (e, price, month) => {
         if (Cookies.get("isPremium")) {
-            alert("You are already a premium user");
+            config.alerts.error("You are already a premium user");
             return;
         }
         const response = await fetch(`${config.SERVER_URL}/api/subscribe`, {
@@ -66,10 +66,10 @@ const Premium = () => {
                     });
                     const validateJson = await validateRes.json();
                     if (validateRes.ok) {
-                        alert(validateJson.message);
+                        config.alerts.success(validateJson.message);
                         Cookies.set("isPremium", "true");
                     } else {
-                        alert(validateJson.message);
+                        config.alerts.error(validateJson.message);
                     }
                 },
                 "theme": {
@@ -78,12 +78,12 @@ const Premium = () => {
             };
             var rzp1 = new window.Razorpay(options);
             rzp1.on('payment.failed', function (response) {
-                alert(response.error.description);
+                config.alerts.error(response.error.description);
             });
             rzp1.open();
             e.preventDefault();
         } else {
-            alert(order.message);
+            config.alerts.error(order.message);
         }
     }
 

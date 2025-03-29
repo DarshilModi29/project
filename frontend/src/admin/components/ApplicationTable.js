@@ -16,14 +16,14 @@ const ApplicationTable = ({ page, data, fetchApplications }) => {
             });
             const data = await response.json();
             if (response.ok) {
-                alert(data.message);
+                config.alerts.success(data.message);
                 fetchApplications();
             } else {
-                alert(data.message);
+                config.alerts.error(data.message);
             }
         } catch (error) {
             console.log(error);
-            alert(error.toString());
+            config.alerts.error(error.toString());
         }
     }
 
@@ -37,14 +37,14 @@ const ApplicationTable = ({ page, data, fetchApplications }) => {
             });
             const data = await response.json();
             if (response.ok) {
-                alert(data.message);
+                config.alerts.success(data.message);
                 fetchApplications();
             } else {
-                alert(data.message);
+                config.alerts.error(data.message);
             }
         } catch (error) {
             console.log(error);
-            alert(error.toString());
+            config.alerts.error(error.toString());
         }
     }
 

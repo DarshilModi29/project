@@ -33,7 +33,7 @@ const InfinitePro = () => {
         if (response.ok) {
             setApplications(data.data);
         } else {
-            alert(data.message);
+            config.alerts.error(data.message);
         }
     }, [activeNav]);
 

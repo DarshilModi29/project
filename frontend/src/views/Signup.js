@@ -151,13 +151,13 @@ const SignUp = () => {
         });
         const data = await response.json();
         if (response.ok) {
-          alert(data.message);
+          config.alerts.success(data.message);
           action.resetForm();
           setProfilePic(null);
           setProfilePicError("");
           navigate("/login");
         } else {
-          alert(data.message);
+          config.alerts.error(data.message);
         }
       }
     }

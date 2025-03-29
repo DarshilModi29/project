@@ -145,10 +145,10 @@ const Login = () => {
           Cookies.set("profilePic", data.data.profilePic, { expires: 730 });
           navigate("/");
         } else {
-          alert(data.message);
+          config.alerts.error(data.message);
         }
       } else {
-        alert(data.message);
+        config.alerts.error(data.message);
       }
     }
   });

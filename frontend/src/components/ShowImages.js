@@ -41,11 +41,11 @@ const ShowImages = ({ fetchUserImages, limit, images, page = "", getSavedImages 
                 if (response.ok) {
                     setSavedImages(data.data);
                 } else {
-                    alert(data.message);
+                    config.alerts.error(data.message);
                 }
             } catch (error) {
                 console.log(error);
-                alert(error.toString());
+                config.alerts.error(error.toString());
             }
         };
 
@@ -72,15 +72,15 @@ const ShowImages = ({ fetchUserImages, limit, images, page = "", getSavedImages 
             } else {
                 const data = await response.json();
                 if (response.status === 401) {
-                    alert(data.message);
+                    config.alerts.error(data.message);
                     navigate("/login");
                 } else {
-                    alert(data.message);
+                    config.alerts.error(data.message);
                 }
             }
         } catch (error) {
             console.log(error);
-            alert(error.toString());
+            config.alerts.error(error.toString());
         }
     };
 
@@ -96,21 +96,21 @@ const ShowImages = ({ fetchUserImages, limit, images, page = "", getSavedImages 
 
             const data = await response.json();
             if (response.ok) {
-                alert(data.message);
+                config.alerts.success(data.message);
                 if (page === "savedImages") {
                     getSavedImages();
                 }
                 setSavedImages(prev => prev.filter(imageId => imageId !== id));
             } else {
                 if (response.status === 401) {
-                    alert(data.message);
+                    config.alerts.error(data.message);
                     navigate("/login");
                 } else {
-                    alert(data.message);
+                    config.alerts.error(data.message);
                 }
             }
         } catch (error) {
-            alert(error.toString());
+            config.alerts.error(error.toString());
             console.log(error);
         }
     };
@@ -127,18 +127,18 @@ const ShowImages = ({ fetchUserImages, limit, images, page = "", getSavedImages 
 
             const data = await response.json();
             if (response.ok) {
-                alert(data.message);
+                config.alerts.success(data.message);
                 setSavedImages(prev => [...prev, id]);
             } else {
                 if (response.status === 401) {
-                    alert(data.message);
+                    config.alerts.error(data.message);
                     navigate("/login");
                 } else {
-                    alert(data.message);
+                    config.alerts.error(data.message);
                 }
             }
         } catch (error) {
-            alert(error.toString());
+            config.alerts.error(error.toString());
             console.log(error);
         }
     };
@@ -164,7 +164,6 @@ const ShowImages = ({ fetchUserImages, limit, images, page = "", getSavedImages 
             });
             const data = await response.json();
             if (response.ok) {
-                console.log(data.data);
                 setDescription(data.data.description);
                 const mappedTags = data.data.tags.map(tag => ({
                     label: formatTag(tag),
@@ -175,7 +174,7 @@ const ShowImages = ({ fetchUserImages, limit, images, page = "", getSavedImages 
             }
         } catch (error) {
             console.log(error);
-            alert(error.toString());
+            config.alerts.error(error.toString());
         }
 
     }
@@ -204,35 +203,38 @@ const ShowImages = ({ fetchUserImages, limit, images, page = "", getSavedImages 
             });
             const data = await response.json();
             if (response.ok) {
-                alert(data.message);
+                config.alerts.success(data.message);
                 closeModal();
             } else {
-                alert(data.message);
+                config.alerts.error(data.message);
             }
         } catch (error) {
             console.log(error);
-            alert(error.toString());
+            config.alerts.error(error.toString());
         }
     }
 
     const deleteImage = async (e, id) => {
         try {
             e.stopPropagation();
-            const response = await fetch(`${config.SERVER_URL}/api/deleteImage/${id}`, {
-                method: "DELETE",
-                headers: {
-                    "Authorization": `bearer ${Cookies.get("jwt")}`
+            const isConfirmed = await config.alerts.confirm("Are you sure?", "This action cannot be undone.");
+            if (isConfirmed) {
+                const response = await fetch(`${config.SERVER_URL}/api/deleteImage/${id}`, {
+                    method: "DELETE",
+                    headers: {
+                        "Authorization": `bearer ${Cookies.get("jwt")}`
+                    }
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    config.alerts.error(data.message);
+                    fetchUserImages();
+                } else {
+                    config.alerts.error(data.message);
                 }
-            });
-            const data = await response.json();
-            if (response.ok) {
-                alert(data.message);
-                fetchUserImages();
-            } else {
-                alert(data.message);
             }
         } catch (error) {
-            alert(error.toString());
+            config.alerts.error(error.toString());
             console.log(error);
         }
     }

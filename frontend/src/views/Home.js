@@ -14,10 +14,10 @@ function Home() {
       if (response.ok) {
         setMostDownloads(data.data);
       } else {
-        alert(data.message)
+        config.alerts.error(data.message)
       }
     } catch (error) {
-      alert(error.toString());
+      config.alerts.error(error.toString());
       console.log(error);
     }
   }, []);
@@ -29,10 +29,10 @@ function Home() {
       if (response.ok) {
         setMostRated(data.data);
       } else {
-        alert(data.message)
+        config.alerts.error(data.message)
       }
     } catch (error) {
-      alert(error.toString());
+      config.alerts.error(error.toString());
       console.log(error);
     }
   }, []);

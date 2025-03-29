@@ -19,7 +19,7 @@ const Earnings = () => {
             }
         } catch (error) {
             console.log(error);
-            alert(error.toString());
+            config.alerts.error(error.toString());
         }
     }, []);
 

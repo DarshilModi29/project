@@ -60,9 +60,9 @@ const Contest = () => {
                         action.resetForm();
                         fetchContests();
                         handleClose();
-                        alert(data.message);
+                        config.alerts.success(data.message);
                     } else {
-                        alert(data.message);
+                        config.alerts.error(data.message);
                     }
                 } else {
                     const response = await fetch(`${config.SERVER_URL}/api/create-contest`, {
@@ -78,14 +78,14 @@ const Contest = () => {
                         action.resetForm();
                         fetchContests();
                         handleClose();
-                        alert(data.message);
+                        config.alerts.success(data.message);
                     } else {
-                        alert(data.message);
+                        config.alerts.error(data.message);
                     }
                 }
             } catch (error) {
                 console.log(error);
-                alert(error.toString());
+                config.alerts.error(error.toString());
             }
         }
     });
@@ -107,13 +107,14 @@ const Contest = () => {
             }
         } catch (error) {
             console.log(error);
-            alert(error.message);
+            config.alerts.error(error.message);
         }
     }
 
     const deleteContest = async (id) => {
         try {
-            if (window.confirm("Are you sure to delete this contest?")) {
+            const isConfirmed = await config.alerts.confirm("Are you sure?", "This action cannot be undone.");
+            if (isConfirmed) {
                 const response = await fetch(`${config.SERVER_URL}/api/delete-contest/${id}`, {
                     method: "DELETE",
                     headers: {
@@ -122,15 +123,15 @@ const Contest = () => {
                 });
                 const data = await response.json();
                 if (response.ok) {
-                    alert(data.message);
+                    config.alerts.success(data.message);
                     fetchContests();
                 } else {
-                    alert(date.message);
+                    config.alerts.error(date.message);
                 }
             }
         } catch (error) {
             console.log(error);
-            alert(error.toString());
+            config.alerts.error(error.toString());
         }
     }
 
@@ -143,11 +144,11 @@ const Contest = () => {
             if (response.ok) {
                 setContests(data.data);
             } else {
-                alert(data.message);
+                config.alerts.error(data.message);
             }
         } catch (error) {
             console.log(error);
-            alert(error.toString());
+            config.alerts.error(error.toString());
         }
     }, [activeNav]);
 

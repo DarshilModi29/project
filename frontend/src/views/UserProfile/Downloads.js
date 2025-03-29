@@ -19,10 +19,10 @@ const Downloads = () => {
             if (response.ok) {
                 setImages(data.data);
             } else {
-                alert(data.message);
+                config.alerts.error(data.message);
             }
         } catch (error) {
-            alert(error.toString());
+            config.alerts.error(error.toString());
             console.log(error);
         }
     }, []);
@@ -43,11 +43,11 @@ const Downloads = () => {
                 saveAs(blob, image);
             } else {
                 const data = await response.json();
-                alert(data.message);
+                config.alerts.error(data.message);
             }
         } catch (error) {
             console.log(error);
-            alert(error.toString());
+            config.alerts.error(error.toString());
         }
     }
 

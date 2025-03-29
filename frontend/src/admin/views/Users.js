@@ -22,22 +22,25 @@ const Users = () => {
   };
 
   const suspendUser = async () => {
-    const response = await fetch(`${config.SERVER_URL}/api/suspendUser/${userId}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `bearer ${Cookies.get("jwt")}`
-      },
-      body: JSON.stringify({ days: suspendDays })
-    });
-    const data = await response.json();
+    const isConfirmed = await config.alerts.confirm("Are you sure?", "This action cannot be undone.");
+    if (isConfirmed) {
+      const response = await fetch(`${config.SERVER_URL}/api/suspendUser/${userId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `bearer ${Cookies.get("jwt")}`
+        },
+        body: JSON.stringify({ days: suspendDays })
+      });
+      const data = await response.json();
 
-    if (response.ok) {
-      getAllUsers();
-      setModal(false);
-      alert(data.message);
-    } else {
-      alert(data.message || "Error suspending user");
+      if (response.ok) {
+        getAllUsers();
+        setModal(false);
+        config.alerts.success(data.message);
+      } else {
+        config.alerts.error(data.message || "Error suspending user");
+      }
     }
   }
 
@@ -52,28 +55,31 @@ const Users = () => {
     const data = await response.json();
     if (response.ok) {
       getAllUsers();
-      alert(data.message);
+      config.alerts.success(data.message);
       setSuspendDays(1);
     } else {
-      alert(data.message || "Error removing suspension");
+      config.alerts.error(data.message || "Error removing suspension");
     }
   }
 
   const userBan = async (id, action) => {
-    const response = await fetch(`${config.SERVER_URL}/api/userBan/${id}`, {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json',
-        "Authorization": `bearer ${Cookies.get("jwt")}`
-      },
-      body: JSON.stringify({ action })
-    });
-    const data = await response.json();
-    if (response.ok) {
-      getAllUsers();
-      alert(data.message);
-    } else {
-      alert(data.message || "Error banning user");
+    const isConfirmed = await config.alerts.confirm("Are you sure?", "This action cannot be undone.");
+    if (isConfirmed) {
+      const response = await fetch(`${config.SERVER_URL}/api/userBan/${id}`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+          "Authorization": `bearer ${Cookies.get("jwt")}`
+        },
+        body: JSON.stringify({ action })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        getAllUsers();
+        config.alerts.success(data.message);
+      } else {
+        config.alerts.error(data.message || "Error banning user");
+      }
     }
   }
 
@@ -87,10 +93,10 @@ const Users = () => {
         setUsers(data.data);
         setTotalUsers(data.totalUsers);
       } else {
-        alert(data.message);
+        config.alerts.error(data.message);
       }
     } catch (error) {
-      alert(error.toString());
+      config.alerts.error(error.toString());
       console.log(error);
     }
   }, [activePage]);

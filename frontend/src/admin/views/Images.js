@@ -29,11 +29,11 @@ const Images = () => {
                 setImages(data.data);
                 setTotalImages(data.totalImages);
             } else {
-                alert(data.message);
+                config.alerts.error(data.message);
             }
         } catch (error) {
             console.log(error);
-            alert(error.toString());
+            config.alerts.error(error.toString());
         }
     }, [activePage, activeTab]);
 

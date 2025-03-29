@@ -20,11 +20,11 @@ const SavedImages = () => {
             if (response.ok) {
                 setSaved(data.data);
             } else {
-                alert(data.message);
+                config.alerts.error(data.message);
             }
         } catch (error) {
             console.log(error.toString());
-            alert(error);
+            config.alerts.error(error);
         }
     }, []);
 

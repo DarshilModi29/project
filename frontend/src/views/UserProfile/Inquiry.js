@@ -23,35 +23,38 @@ const Inquiry = () => {
             if (response.ok) {
                 setInquiries(data.data);
             } else {
-                alert(data.message);
+                config.alerts.error(data.message);
             }
         } catch (error) {
             console.log(error);
-            alert(error.toString());
+            config.alerts.error(error.toString());
         }
     }, []);
 
     const deleteInquiry = async (id, action) => {
         try {
-            const response = await fetch(`${config.SERVER_URL}/api/replyInquiry/${id}`, {
-                method: "POST",
-                headers: {
-                    "Authorization": `bearer ${Cookies.get("jwt")}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ action })
-            });
+            const isConfirmed = await config.alerts.confirm("Are you sure?", "This action cannot be undone.");
+            if (isConfirmed) {
+                const response = await fetch(`${config.SERVER_URL}/api/replyInquiry/${id}`, {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `bearer ${Cookies.get("jwt")}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ action })
+                });
 
-            const data = await response.json();
-            if (response.ok) {
-                getInquiries();
-                alert(data.message);
-            } else {
-                alert(data.message)
+                const data = await response.json();
+                if (response.ok) {
+                    getInquiries();
+                    config.alerts.success(data.message);
+                } else {
+                    config.alerts.error(data.message)
+                }
             }
         } catch (error) {
             console.log(error);
-            alert(error.toString());
+            config.alerts.error(error.toString());
         }
     }
 

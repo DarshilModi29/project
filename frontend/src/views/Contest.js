@@ -30,32 +30,34 @@ const Contest = () => {
         } else if (images[0].size / (1024 * 1024) > 4) {
             setError("Image size exceeds 4MB");
         } else {
-            if (window.confirm("Are you sure you want to upload this image? You can't change this image after uplaoding it.")) {
-                const formData = new FormData();
-                formData.append("contest_image", images[0]);
-                const response = await fetch(`${config.SERVER_URL}/api/contest-image/${contestId}`, {
-                    method: "POST",
-                    headers: {
-                        "Authorization": `bearer ${Cookies.get("jwt")}`
-                    },
-                    body: formData,
-                });
-                const data = await response.json();
-                if (response.ok) {
-                    if (data.success) {
-                        alert(data.success);
-                        toggleModal();
-                        setContestId("");
-                        checkParticipant();
+            const isConfirmed = await config.alerts.confirm("Are you sure?", "This action cannot be undone.");
+            if (isConfirmed) {
+                if (window.confirm("Are you sure you want to upload this image? You can't change this image after uplaoding it.")) {
+                    const formData = new FormData();
+                    formData.append("contest_image", images[0]);
+                    const response = await fetch(`${config.SERVER_URL}/api/contest-image/${contestId}`, {
+                        method: "POST",
+                        headers: {
+                            "Authorization": `bearer ${Cookies.get("jwt")}`
+                        },
+                        body: formData,
+                    });
+                    const data = await response.json();
+                    if (response.ok) {
+                        if (data.success) {
+                            config.alerts.success(data.success);
+                            toggleModal();
+                            setContestId("");
+                            checkParticipant();
+                        }
+                    } else if (data.error) {
+                        setError(data.error);
+                    } else {
+                        config.alerts.error(data.message);
                     }
-                } else if (data.error) {
-                    setError(data.error);
-                } else {
-                    alert(data.message);
                 }
             }
         }
-
     }
 
     const fetchContests = useCallback(async () => {
@@ -65,11 +67,11 @@ const Contest = () => {
             if (response.ok) {
                 setContests(data.data);
             } else {
-                alert(data.message);
+                config.alerts.error(data.message);
             }
         } catch (error) {
             console.log(error);
-            alert(error.toString());
+            config.alerts.error(error.toString());
         }
     }, []);
 
@@ -83,20 +85,20 @@ const Contest = () => {
             });
             const data = await response.json();
             if (response.ok) {
-                alert(data.message);
+                config.alerts.success(data.message);
                 fetchContests();
                 checkParticipant();
             } else {
                 if (!data.status) {
-                    alert(data.message);
+                    config.alerts.error(data.message);
                     navigate("/premium");
                 } else {
-                    alert(data.message);
+                    config.alerts.error(data.message);
                 }
             }
         } catch (error) {
             console.log(error);
-            alert(error.toString());
+            config.alerts.error(error.toString());
         }
     }
 
@@ -116,7 +118,7 @@ const Contest = () => {
             }
         } catch (error) {
             console.log(error);
-            alert(error.toString());
+            config.alerts.error(error.toString());
         }
     }, []);
 

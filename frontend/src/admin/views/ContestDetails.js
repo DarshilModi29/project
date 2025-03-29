@@ -18,7 +18,7 @@ const ContestDetails = () => {
             }
         } catch (error) {
             console.log(error);
-            alert(error.message);
+            config.alerts.error(error.message);
         }
     }, [id]);
 

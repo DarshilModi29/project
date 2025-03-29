@@ -58,27 +58,30 @@ const Tags = () => {
                     action.resetForm();
                     getTags();
                     handleClose();
-                    alert(data.message);
+                    config.alerts.success(data.message);
                 } else {
-                    alert(data.message);
+                    config.alerts.error(data.message);
                 }
             }
         }
     });
 
     const removeTag = async (id) => {
-        const response = await fetch(`${config.SERVER_URL}/api/removeTag/${id}`, {
-            method: "DELETE",
-            headers: {
-                "Authorization": `bearer ${Cookies.get("jwt")}`
+        const isConfirmed = await config.alerts.confirm("Are you sure?", "This action cannot be undone.");
+        if (isConfirmed) {
+            const response = await fetch(`${config.SERVER_URL}/api/removeTag/${id}`, {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `bearer ${Cookies.get("jwt")}`
+                }
+            });
+            const data = await response.json();
+            if (response.ok) {
+                getTags();
+                config.alerts.success(data.message);
+            } else {
+                config.alerts.error(data.message);
             }
-        });
-        const data = await response.json();
-        if (response.ok) {
-            getTags();
-            alert(data.message);
-        } else {
-            alert(data.message);
         }
     }
 
@@ -92,10 +95,10 @@ const Tags = () => {
                 setTags(data.data);
                 setTotal(data.totalTags);
             } else {
-                alert(data.message);
+                config.alerts.error(data.message);
             }
         } catch (error) {
-            alert(error.toString());
+            config.alerts.error(error.toString());
             console.log(error);
         }
     }, [activePage]);

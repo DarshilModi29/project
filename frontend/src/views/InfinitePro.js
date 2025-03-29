@@ -63,14 +63,14 @@ const InfinitePro = () => {
                         setFileInputKey(Date.now());
                         setTermsError('');
                         setImageError('');
-                        alert(data.message);
+                        config.alerts.success(data.message);
                     } else {
-                        alert(data.message);
+                        config.alerts.error(data.message);
                     }
                 }
             } catch (error) {
                 console.log(error);
-                alert(error.toString());
+                config.alerts.error(error.toString());
             }
         }
     })

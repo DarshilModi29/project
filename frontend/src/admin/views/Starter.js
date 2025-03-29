@@ -24,10 +24,10 @@ const Starter = () => {
       if (response.ok) {
         setCardDetails(data.data);
       } else {
-        alert(data.message);
+        config.alerts.error(data.message);
       }
     } catch (error) {
-      alert(error.toString());
+      config.alerts.error(error.toString());
       console.log(error);
     }
   }, []);
@@ -42,10 +42,10 @@ const Starter = () => {
         setTotalImages(data.totalImages);
         setImages(data.data);
       } else {
-        alert(data.message);
+        config.alerts.error(data.message);
       }
     } catch (error) {
-      alert(error.toString());
+      config.alerts.error(error.toString());
       console.log(error);
     }
   }, [activePage]);

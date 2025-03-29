@@ -19,11 +19,11 @@ const Participants = ({ contestId }) => {
                 if (response.ok) {
                     setParticipants(data.data);
                 } else {
-                    alert(data.data);
+                    config.alerts.error(data.data);
                 }
             } catch (error) {
                 console.log(error);
-                alert(error.toString());
+                config.alerts.error(error.toString());
             }
         }
 

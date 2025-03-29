@@ -22,15 +22,15 @@ const Participants = ({ contestId, isEnded }) => {
             });
             const data = await response.json();
             if (response.ok) {
-                alert(data.message);
+                config.alerts.success(data.message);
                 fetchParticipants();
                 checkVote();
             } else {
-                alert(data.message);
+                config.alerts.error(data.message);
             }
         } catch (error) {
             console.log(error);
-            alert(error.toString());
+            config.alerts.error(error.toString());
         }
     }
 
@@ -46,11 +46,11 @@ const Participants = ({ contestId, isEnded }) => {
             if (response.ok) {
                 setIsVoted(data.isVoted);
             } else {
-                alert(data.message);
+                config.alerts.error(data.message);
             }
         } catch (error) {
             console.log(error);
-            alert(error.toString());
+            config.alerts.error(error.toString());
         }
     }, [contestId])
 
@@ -66,11 +66,11 @@ const Participants = ({ contestId, isEnded }) => {
             if (response.ok) {
                 setParticipants(data.data);
             } else {
-                alert(data.message);
+                config.alerts.error(data.message);
             }
         } catch (error) {
             console.log(error);
-            alert(error.toString());
+            config.alerts.error(error.toString());
         }
     }, [contestId]);
 

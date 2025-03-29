@@ -51,9 +51,9 @@ const PricingModel = () => {
                 action.resetForm();
                 getPricing();
                 handleClose();
-                alert(data.message);
+                config.alerts.success(data.message);
             } else {
-                alert(data.message);
+                config.alerts.error(data.message);
             }
         }
     });
@@ -72,11 +72,11 @@ const PricingModel = () => {
                 setFieldValue("amount", data.data.amount);
                 setModelId(id);
             } else {
-                alert(data.message);
+                config.alerts.error(data.message);
             }
         } catch (error) {
             console.log(error);
-            alert(error.toString());
+            config.alerts.error(error.toString());
         }
     }
 
@@ -92,17 +92,18 @@ const PricingModel = () => {
             if (response.ok) {
                 setPricing(data.data);
             } else {
-                alert(data.message);
+                config.alerts.error(data.message);
             }
         } catch (error) {
             console.log(error);
-            alert(error.toString());
+            config.alerts.error(error.toString());
         }
     }, []);
 
     const removeModel = async (id) => {
         try {
-            if (window.confirm("Are you sure you want to delete this pricing model?")) {
+            const isConfirmed = await config.alerts.confirm("Are you sure?", "This action cannot be undone.");
+            if (isConfirmed) {
                 const response = await fetch(`${config.SERVER_URL}/api/remove-premium-pricing/${id}`, {
                     method: "DELETE",
                     headers: {
@@ -112,14 +113,14 @@ const PricingModel = () => {
                 const data = await response.json();
                 if (response.ok) {
                     getPricing();
-                    alert(data.message);
+                    config.alerts.success(data.message);
                 } else {
-                    alert(data.message);
+                    config.alerts.error(data.message);
                 }
             }
         } catch (error) {
             console.log(error);
-            alert(error.toString());
+            config.alerts.error(error.toString());
         }
     }
 

@@ -28,18 +28,18 @@ const ImageModal = ({ imageId, rating, src, modal, toggle, imageSize, closeModal
             });
             const data = await response.json();
             if (response.ok) {
-                alert(data.message);
+                config.alerts.success(data.message);
             } else {
                 if (response.status === 401) {
-                    alert(data.message);
+                    config.alerts.error(data.message);
                     navigate("/login");
                 } else {
-                    alert(data.message);
+                    config.alerts.error(data.message);
                 }
             }
         } catch (error) {
             console.log(error);
-            alert(error.toString());
+            config.alerts.error(error.toString());
         }
     }
 
@@ -63,7 +63,7 @@ const ImageModal = ({ imageId, rating, src, modal, toggle, imageSize, closeModal
                 }
             } catch (error) {
                 console.log(error);
-                alert(error.toString());
+                config.alerts.error(error.toString());
             }
         }
 

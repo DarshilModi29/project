@@ -44,9 +44,9 @@ const Inquiry = () => {
             setInquiryId("");
             handleClose();
             setInquiry({ subject: "", text: "" });
-            alert(data.message);
+            config.alerts.success(data.message);
         } else {
-            alert(data.message);
+            config.alerts.error(data.message);
         }
     }
 
@@ -60,10 +60,10 @@ const Inquiry = () => {
                 setInquiries(data.data);
                 setTotalInquiries(data.totalInquries);
             } else {
-                alert(data.message);
+                config.alerts.error(data.message);
             }
         } catch (error) {
-            alert(error.toString());
+            config.alerts.error(error.toString());
             console.log(error)
         }
     }, [activePage]);

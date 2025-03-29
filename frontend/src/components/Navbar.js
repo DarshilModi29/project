@@ -68,13 +68,13 @@ const Navbar = () => {
       setDescription("");
       setSelectedTags([]);
       handleClose();
-      alert(data.message)
+      config.alerts.success(data.message)
     } else {
       if (response.status === 401) {
-        alert(data.message);
+        config.alerts.error(data.message);
         navigate("/login");
       } else {
-        alert(data.message)
+        config.alerts.error(data.message)
       }
     }
   }

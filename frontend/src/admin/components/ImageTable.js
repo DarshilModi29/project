@@ -17,9 +17,9 @@ const ImageTable = ({ children, getImages, headings, images, config }) => {
         const data = await response.json();
         if (response.ok) {
             getImages();
-            alert(data.message);
+            config.alerts.success(data.message);
         } else {
-            alert(data.message || "Error banning user");
+            config.alerts.error(data.message || "Error Hiding Image");
         }
     }
 
