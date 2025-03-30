@@ -80,13 +80,13 @@ router.post("/api/downloadImage", Auth, async (req, res) => {
                     $count: "uniqueCount"
                 }
             ]);
-            const neededDownloads = parseInt(process.env.DOWNLOADS);
-            if (uniqueDownloads.length % neededDownloads === 0) {
-                if (uniqueDownloads.length >= neededDownloads && image_id.earnings == 0) {
+            const neededDownloads = parseInt(process.env.DOWNLOADS) || 5;
+            const uniqueCount = uniqueDownloads[0]?.uniqueCount || 0; // Ensure correct access
+            if (uniqueCount > 0 && uniqueCount % neededDownloads === 0) {
+                if (uniqueCount >= neededDownloads && image_id.earnings === 0) {
                     await imageSchema.findByIdAndUpdate(image_id._id, { $set: { earnings: 100 } });
                     await earningSchema.updateOne({ user_id: image_id.user, month }, { $inc: { amount: 100 } });
-                }
-                else if (image_id.earnings >= 100 && image_id.earnings < 300) {
+                } else if (image_id.earnings >= 100 && image_id.earnings < 300) {
                     await imageSchema.findByIdAndUpdate(image_id._id, { $inc: { earnings: 5 } });
                     await earningSchema.updateOne({ user_id: image_id.user, month }, { $inc: { amount: 5 } });
                 }
