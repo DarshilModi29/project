@@ -142,6 +142,53 @@ router.get("/api/userDetails", Auth, async (req, res) => {
         console.log(error);
         res.status(500).json({ message: 'Error verifying email' });
     }
+});
+
+router.post("/api/send-otp", async (req, res) => {
+    try {
+        const { email } = req.body;
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        const otp = Math.floor(100000 + Math.random() * 900000);
+        verifyEmail(email, "Forgot Password", `Your one time password is ${otp}`)
+        req.session.otp = otp;
+
+        res.json({ message: `OTP sent successfully on your email ${email}` });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+router.post("/api/verify-otp", async (req, res) => {
+    try {
+        const { otp } = req.body;
+        if (req.session.otp && otp == req.session.otp) {
+            req.session.destroy();
+            return res.json({ message: "OTP verified successfully" });
+        } else {
+            return res.status(400).json({ message: "Invalid OTP" });
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+router.post("/api/change-password", async (req, res) => {
+    try {
+        const { email, newPassword } = req.body;
+        const salt = await bcryptjs.genSalt(10);
+        const hashPass = await bcryptjs.hash(newPassword, salt);
+        await User.updateOne({ email }, { $set: { password: hashPass } });
+        res.json({ message: "Password changed successfully" });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
 })
 
 cron.schedule("0 * * * * *", async () => {

@@ -32,29 +32,27 @@ const Contest = () => {
         } else {
             const isConfirmed = await config.alerts.confirm("Are you sure?", "This action cannot be undone.");
             if (isConfirmed) {
-                if (window.confirm("Are you sure you want to upload this image? You can't change this image after uplaoding it.")) {
-                    const formData = new FormData();
-                    formData.append("contest_image", images[0]);
-                    const response = await fetch(`${config.SERVER_URL}/api/contest-image/${contestId}`, {
-                        method: "POST",
-                        headers: {
-                            "Authorization": `bearer ${Cookies.get("jwt")}`
-                        },
-                        body: formData,
-                    });
-                    const data = await response.json();
-                    if (response.ok) {
-                        if (data.success) {
-                            config.alerts.success(data.success);
-                            toggleModal();
-                            setContestId("");
-                            checkParticipant();
-                        }
-                    } else if (data.error) {
-                        setError(data.error);
-                    } else {
-                        config.alerts.error(data.message);
+                const formData = new FormData();
+                formData.append("contest_image", images[0]);
+                const response = await fetch(`${config.SERVER_URL}/api/contest-image/${contestId}`, {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `bearer ${Cookies.get("jwt")}`
+                    },
+                    body: formData,
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    if (data.success) {
+                        config.alerts.success(data.success);
+                        toggleModal();
+                        setContestId("");
+                        checkParticipant();
                     }
+                } else if (data.error) {
+                    setError(data.error);
+                } else {
+                    config.alerts.error(data.message);
                 }
             }
         }

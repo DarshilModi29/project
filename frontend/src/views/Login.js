@@ -4,6 +4,7 @@ import { useFormik } from 'formik';
 import config from '../admin/components/Config';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const initVal = {
   email: "",
@@ -67,7 +68,7 @@ const styles = {
     textTransform: 'uppercase',
     fontSize: '13px',
     borderRadius: '5px',
-    margin: '5px 20px 40px 20px',
+    margin: '10px 20px',
     transition: 'all 0.3s ease-in-out',
   },
   buttonHover: {
@@ -191,6 +192,7 @@ const Login = () => {
             value="Log In"
           />
         </form>
+        <small className="text-center">Don't remember password? <Link to="/forgot-password" className="text-primary text-decoration-underline">Forgot Password</Link></small>
       </div>
     </div>
   );

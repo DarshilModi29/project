@@ -189,7 +189,7 @@ const PricingModel = () => {
             </Row>
             <Modal isOpen={isOpen} toggle={toggleModal}>
                 <ModalHeader>
-                    Add Sub Admin
+                    Add Premium Pricings
                 </ModalHeader>
                 <ModalBody>
                     <Form onSubmit={handleSubmit}>

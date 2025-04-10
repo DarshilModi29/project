@@ -3,6 +3,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const session = require("express-session");
 require("dotenv").config();
 require("./db/index");
 const userRouter = require("./src/routers/user");
@@ -25,8 +26,17 @@ const port = process.env.PORT || 8000
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000', // replace with your frontend
+    credentials: true
+}));
 app.use('/images', express.static('images'));
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false, maxAge: 5 * 60 * 1000 }
+}));
 
 app.use(userRouter);
 app.use(imageRouter);

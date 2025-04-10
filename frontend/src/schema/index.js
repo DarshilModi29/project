@@ -37,14 +37,17 @@ export const contestSchema = Yup.object({
     start_date: Yup.date().required("Please select starting date of the contest"),
     end_date: Yup.date().required("Please select ending date of the contest")
         .when("start_date", (start_date, schema) => {
-            return start_date ?
-                schema.min(
-                    new Date(new Date(start_date).setDate(new Date(start_date).getDate() + 1)),
-                    "End date must be at least 1 day after start day"
-                ) : schema;
+            if (start_date) {
+                const minDate = new Date(new Date(start_date).setDate(new Date(start_date).getDate() + 1));
+                const maxDate = new Date(new Date(start_date).setDate(new Date(start_date).getDate() + 10));
+                return schema
+                    .min(minDate, "End date must be at least 1 day after start day")
+                    .max(maxDate, "End date cannot be more than 10 days after start date");
+            }
+            return schema;
         }),
     rules: Yup.string().trim().required("Need rules & guidelines for contest"),
-    contest_size: Yup.number().nullable().min(0, "Negative numbers are not allowed"),
+    contest_size: Yup.number().nullable().min(2, "Minimum 2 spots needed").max(500, "Maximum 500 spots allowed"),
     prize_money: Yup.number().nullable().min(0, "Negative numbers are not allowed").max(100000, "Prize pool should be maximum 1,00,000 rs."),
 });
 

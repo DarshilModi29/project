@@ -22,6 +22,7 @@ const Premium = lazy(() => import("../views/Premium"));
 const InfinitePro = lazy(() => import("../views/InfinitePro"));
 const UserContest = lazy(() => import("../views/UserProfile/Contest"));
 const Earnings = lazy(() => import("../views/UserProfile/Earnings"));
+const ForgotPassword = lazy(() => import("../views/ForgotPassword"));
 
 const UserRoutes = [
     {
@@ -40,6 +41,7 @@ const UserRoutes = [
             { path: "/contest-details", element: <ContestDetail /> },
             { path: "/premium", element: <Premium /> },
             { path: "/infinite-pro", element: <InfinitePro /> },
+            { path: "/forgot-password", element: <ForgotPassword /> },
             {
                 path: "/profile",
                 element: <Profile />,
