@@ -2,12 +2,13 @@ const router = require("express").Router();
 const Auth = require("../middleware/Auth");
 const contestSchema = require("../models/contestSchema");
 const participantSchema = require("../models/participantSchema");
-const { isAdmin, uploadImage } = require("../utilityFunctions/uploadImage");
+const { isAdmin, uploadImage, verifyEmail } = require("../utilityFunctions/uploadImage");
 const cron = require("node-cron");
 const { upload } = require("../middleware/Multer");
 const sharp = require("sharp");
 const votesSchema = require("../models/votesSchema");
 const premiumSchema = require("../models/premiumSchema");
+const userSchema = require("../models/userSchema");
 const { default: mongoose } = require("mongoose");
 
 router.post("/api/create-contest", Auth, async (req, res) => {
@@ -277,8 +278,10 @@ router.get("/api/participants/:id", async (req, res) => {
 
 cron.schedule("0 * * * * *", async () => {
     try {
-        const todayDate = new Date();
-        const currentDate = new Date(todayDate.setUTCHours(0, 0, 0, 0));
+        const now = new Date();
+        const istOffset = 5.5 * 60 * 60 * 1000;
+        const currentDate = new Date(now.getTime() + istOffset);
+        currentDate.setUTCHours(0, 0, 0, 0);
         const result = await contestSchema.updateMany({
             start_date: currentDate,
             status: "Not Started",
@@ -316,12 +319,15 @@ router.get("/api/user-contests", Auth, async (req, res) => {
 
 cron.schedule("0 * * * * *", async () => {
     try {
-        const todayDate = new Date();
-        const currentDate = new Date(todayDate.setUTCHours(0, 0, 0, 0));
+        const now = new Date();
+        const istOffset = 5.5 * 60 * 60 * 1000;
+        const currentDate = new Date(now.getTime() + istOffset);
+        currentDate.setUTCHours(0, 0, 0, 0);
+        var result;
         const contestToEnd = await contestSchema.findOne({
             end_date: currentDate,
             status: "Started",
-        }, { _id: 1 });
+        }, { _id: 1, title: 1, prize_money: 1 });
 
         if (!contestToEnd) {
             console.log("No contest to end today.");
@@ -331,7 +337,12 @@ cron.schedule("0 * * * * *", async () => {
         const contestId = contestToEnd._id;
         const participants = await participantSchema.find({ contest: contestId }).sort({ votes: -1 });
         if (!participants.length) {
-            console.log("No participants in the contest.");
+            console.log("Contest ends without paticipant");
+            result = await contestSchema.updateOne({
+                _id: contestId
+            }, {
+                $set: { status: "Ended" }
+            });
             return;
         }
 
@@ -357,12 +368,21 @@ cron.schedule("0 * * * * *", async () => {
             );
 
             contestWinner = winner ? winner.user : null;
+
         }
-        const result = await contestSchema.updateOne({
+        result = await contestSchema.updateOne({
             _id: contestId
         }, {
             $set: { status: "Ended", winner: contestWinner }
         });
+        if (contestWinner) {
+            const user = await userSchema.findOne({ _id: contestWinner });
+            if (user) {
+                if (contestToEnd.prize_money != 0) {
+                    verifyEmail(user.email, "Contest Winner", `You are winner of contest ${contestToEnd.title} and you won ₹${contestToEnd.prize_money}. Please send your bank details on this email within 2 days`);
+                }
+            }
+        }
         console.log(`${result.modifiedCount} contest(s) have been ended.`);
     } catch (error) {
         console.log("Error in ending contests:", error);

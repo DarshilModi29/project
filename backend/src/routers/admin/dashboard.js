@@ -68,8 +68,8 @@ router.get("/api/todayImages", Auth, async (req, res) => {
             const limit = parseInt(req.query.limit);
             const skip = (page - 1) * limit;
 
-            const startDay = new Date().setHours(0, 0, 0, 0);
-            const endDay = new Date().setHours(23, 59, 59, 999);
+            const startDay = new Date().setUTCHours(0, 0, 0, 0);
+            const endDay = new Date().setUTCHours(23, 59, 59, 999);
             const todayImages = await imageSchema.find({ createdAt: { $gte: startDay, $lt: endDay } })
                 .populate({ path: "user", select: "_id username" })
                 .skip(skip)
@@ -222,11 +222,13 @@ router.post("/api/add-sub-admin", Auth, upload.single('profilePic'), async (req,
                     }
                 });
                 user.profilePic = dbPath;
+            } else {
+                user.profilePic = process.env.DEFAULT_IMAGE
             }
             await user.save();
             const token = generateToken(user._id);
-            const verificationUrl = `http://localhost:5000/verify/${token}`;
-            verifyEmail(email, "Email verification", `Please verify your email by clicking on the following link: ${verificationUrl}`);
+            const verificationUrl = `http://localhost:3000/#/verify?token=${token}`;
+            verifyEmail(email, "Email verification", `Please verify your email by clicking on the following link: <a href="${verificationUrl}">verify</a>`);
             res.json({ message: "Sub Admin has been created ! Please tell your sub admin to verify email" });
         } else {
             res.status(401).json({ message: "You are not authorized to access this route" });

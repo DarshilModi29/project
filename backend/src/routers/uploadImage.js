@@ -93,7 +93,7 @@ router.get("/api/image/:id", Auth, async (req, res) => {
 //images on admin panel
 router.get("/api/allImages", Auth, async (req, res) => {
     try {
-        const page = parseInt(req.query.page);
+        const page = parseInt(req.query.activePage);
         const limit = parseInt(req.query.limit);
         const skip = (page - 1) * limit;
 
@@ -102,13 +102,8 @@ router.get("/api/allImages", Auth, async (req, res) => {
             .sort({ "_id": -1 })
             .skip(skip)
             .limit(limit);
-        const totalImages = await imageSchema.countDocuments();
-
-        if (images.length > 0) {
-            res.json({ data: images, totalImages });
-        } else {
-            res.json({ message: "No Images Found" });
-        }
+        const totalImages = await imageSchema.countDocuments({ onlyPremium: false });
+        res.json({ data: images, totalImages });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Internal Server Error" });
@@ -126,13 +121,9 @@ router.get("/api/premiumImages", Auth, async (req, res) => {
             .sort({ "_id": -1 })
             .skip(skip)
             .limit(limit);
-        const totalImages = await imageSchema.countDocuments();
+        const totalImages = await imageSchema.countDocuments({ onlyPremium: true });
 
-        if (images.length > 0) {
-            res.json({ data: images, totalImages });
-        } else {
-            res.json({ message: "No Images Found" });
-        }
+        res.json({ data: images, totalImages });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Internal Server Error" });
@@ -235,7 +226,7 @@ router.get("/api/searchImage/:search", async (req, res) => {
 // fetches most rated images
 router.get("/api/mostRatedImages", async (req, res) => {
     try {
-        const images = await imageSchema.find().sort({ rating: -1 }).populate({ path: "user", select: '_id username' }).limit(10);
+        const images = await imageSchema.find({ rating: { $gt: 0 } }).sort({ rating: -1 }).populate({ path: "user", select: '_id username' }).limit(10);
         res.json({ data: images });
     } catch (error) {
         console.log(error);
@@ -246,7 +237,7 @@ router.get("/api/mostRatedImages", async (req, res) => {
 // fetches most downloads images
 router.get("/api/mostDownloadedImages", async (req, res) => {
     try {
-        const images = await imageSchema.find().sort({ downloads: -1 }).populate({ path: "user", select: '_id username' }).limit(10);
+        const images = await imageSchema.find({ downloads: { $gt: 0 } }).sort({ downloads: -1 }).populate({ path: "user", select: '_id username' }).limit(10);
         res.json({ data: images });
     } catch (error) {
         console.log(error);

@@ -101,7 +101,9 @@ router.get("/api/checkPremium", Auth, async (req, res) => {
 
 cron.schedule("0 0 * * * *", async () => {
     try {
-        const todayDate = new Date();
+        const now = new Date();
+        const istOffset = 5.5 * 60 * 60 * 1000;
+        const todayDate = new Date(now.getTime() + istOffset);
         todayDate.setUTCHours(0, 0, 0, 0);
         const expiredPremium = await premiumSchema.find({ expired: todayDate });
         const users = expiredPremium.map(user => user._id);
