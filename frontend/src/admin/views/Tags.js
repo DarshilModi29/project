@@ -139,7 +139,7 @@ const Tags = () => {
                                     {tags?.map((tag, index) => {
                                         return (
                                             <tr key={index}>
-                                                <td>{index + 1}</td>
+                                                <td>{(activePage - 1) * limit + index + 1}</td>
                                                 <td>{tag.name}</td>
                                                 <td>{tag.slug}</td>
                                                 <td>{tag.counts}</td>

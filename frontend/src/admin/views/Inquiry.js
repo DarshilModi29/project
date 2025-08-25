@@ -98,7 +98,7 @@ const Inquiry = () => {
                                     {inquiries?.map((inquiry, index) => {
                                         return (
                                             <tr key={index}>
-                                                <td>{index + 1}</td>
+                                                <td>{(activePage - 1) * limit + index + 1}</td>
                                                 <td>{inquiry.user_id.username}</td>
                                                 <td>{inquiry.inquireFor}</td>
                                                 <TextTruncateWithModal data={inquiry.description} />

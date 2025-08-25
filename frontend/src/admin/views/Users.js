@@ -131,10 +131,10 @@ const Users = () => {
                   {users?.map((user, index) => {
                     return (
                       <tr key={index}>
-                        <td>{index + 1}</td>
+                        <td>{(activePage - 1) * limit + index + 1}</td>
                         <td className="text-center">
                           <img role="button" src={`${config.SERVER_URL}/${user.profilePic}`} alt={""}
-                            height={50} width={50} onClick={() => window.open(`${config.SERVER_URL}/${user.profilePic}`, '_blank')} />
+                            height={50} width={50} className='object-fit-cover' onClick={() => window.open(`${config.SERVER_URL}/${user.profilePic}`, '_blank')} />
                         </td>
                         <td>{user.username}</td>
                         <td>{user.email}</td>

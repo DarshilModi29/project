@@ -8,6 +8,7 @@ import PaginationData from "../components/Pagination";
 import Cookies from "js-cookie";
 
 const headings = ["", "Image", "Uploader", "Tags", "Description", "Size", "Ratings", "Downloads", "Actions"]
+const limit = 10;
 
 const Starter = () => {
   const [cardDetails, setCardDetails] = useState([]);
@@ -34,7 +35,7 @@ const Starter = () => {
 
   const getTodayImages = useCallback(async () => {
     try {
-      const response = await fetch(`${config.SERVER_URL}/api/todayImages`, {
+      const response = await fetch(`${config.SERVER_URL}/api/todayImages?limit=${limit}&activePage=${activePage}`, {
         headers: { "Authorization": `bearer ${Cookies.get("jwt")}` }
       });
       const data = await response.json();
@@ -96,9 +97,9 @@ const Starter = () => {
             <CardBody>
               <CardTitle tag="h5">Images</CardTitle>
               <CardSubtitle className="mb-2 text-muted" tag="h6">
-                Premium and Normal Images Uploaded today
+                Images Uploaded today
               </CardSubtitle>
-              <ImageTable getImages={getTodayImages} title={"Images"} subtitle={"Images Uploaded Today"} headings={headings} images={images} config={config}>
+              <ImageTable limit={limit} activePage={activePage} getImages={getTodayImages} title={"Images"} subtitle={"Images Uploaded Today"} headings={headings} images={images} config={config}>
                 <PaginationData total={totalImages} setActivePage={setActivePage} activePage={activePage} />
               </ImageTable>
             </CardBody>

@@ -71,13 +71,13 @@ const Header = () => {
             <img
               src={`${config.SERVER_URL}/${Cookies.get("profilePic")}`}
               alt="profile"
-              className="rounded-circle"
+              className="rounded-circle object-fit-cover"
               width="30"
             ></img>
           </DropdownToggle>
           <DropdownMenu>
             <DropdownItem header>Info</DropdownItem>
-            <DropdownItem>My Account</DropdownItem>
+            {/* <DropdownItem>My Account</DropdownItem> */}
             <DropdownItem onClick={Logout}>Logout</DropdownItem>
           </DropdownMenu>
         </Dropdown>

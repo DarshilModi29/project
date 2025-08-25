@@ -122,7 +122,7 @@ const Navbar = () => {
                       <img
                         src={`${config.SERVER_URL}/${Cookies.get("profilePic")}`}
                         alt="profile"
-                        className="rounded-circle"
+                        className="rounded-circle object-fit-cover"
                         width="40"
                         height="30"
                       ></img>

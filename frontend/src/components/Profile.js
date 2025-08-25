@@ -40,7 +40,7 @@ const Profile = () => {
                         height={200}
                         alt="Profile"
                         src={`${config.SERVER_URL}/${profileData.profilePic}`}
-                        className="rounded-circle shadow-sm mb-3"
+                        className="rounded-circle shadow-sm mb-3 object-fit-cover"
                     />
                 </div>
                 <div className="col-12 text-center">

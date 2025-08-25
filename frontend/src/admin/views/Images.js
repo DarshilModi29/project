@@ -14,9 +14,11 @@ const Images = () => {
     const [totalImages, setTotalImages] = useState(0);
     const [activePage, setActivePage] = useState(1);
     const [activeTab, setActiveTab] = useState("1");
+    const [loader, setLoader] = useState(false);
 
     const getImages = useCallback(async () => {
         try {
+            setLoader(true);
             const response =
                 activeTab === "1" ? await fetch(`${config.SERVER_URL}/api/premiumImages?limit=${limit}&page=${activePage}`, {
                     headers: { "Authorization": `bearer ${Cookies.get("jwt")}` }
@@ -34,6 +36,8 @@ const Images = () => {
         } catch (error) {
             console.log(error);
             config.alerts.error(error.toString());
+        } finally {
+            setLoader(false);
         }
     }, [activePage, activeTab]);
 
@@ -68,12 +72,12 @@ const Images = () => {
                         <div className="mt-4">
                             <TabContent activeTab={activeTab}>
                                 <TabPane tabId={"1"}>
-                                    <ImageTable getImages={getImages} title={"Images"} subtitle={"All Images"} headings={headings} images={images} config={config}>
+                                    <ImageTable loader={loader} limit={limit} activePage={activePage} getImages={getImages} title={"Images"} subtitle={"All Images"} headings={headings} images={images} config={config}>
                                         <PaginationData total={totalImages} setActivePage={setActivePage} activePage={activePage} />
                                     </ImageTable>
                                 </TabPane>
                                 <TabPane tabId={"2"}>
-                                    <ImageTable getImages={getImages} title={"Images"} subtitle={"All Images"} headings={headings} images={images} config={config}>
+                                    <ImageTable loader={loader} limit={limit} activePage={activePage} getImages={getImages} title={"Images"} subtitle={"All Images"} headings={headings} images={images} config={config}>
                                         <PaginationData total={totalImages} setActivePage={setActivePage} activePage={activePage} />
                                     </ImageTable>
                                 </TabPane>
